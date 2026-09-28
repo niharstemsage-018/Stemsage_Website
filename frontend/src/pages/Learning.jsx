@@ -1,79 +1,162 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import Footer from "../components/common/Footer";
+import { X, ChevronLeft, ChevronRight, Maximize2, Heart } from "lucide-react";
 
-import bannerBg from "../assets/services/Courses.png";
-import eduKitBg from "../assets/Edu-kit.webp";
+import img1 from "../assets/gallery/image_01.jpg";
+import img2 from "../assets/gallery/image_02.jpg";
+import img3 from "../assets/gallery/image_03.jpg";
+import img4 from "../assets/gallery/image_04.jpg";
+import img5 from "../assets/gallery/image_05.jpg";
+import img6 from "../assets/gallery/image_06.jpg";
+import img7 from "../assets/gallery/image_07.jpg";
+import img8 from "../assets/gallery/image_08.png";
+import img9 from "../assets/gallery/image_09.jpg";
+import img10 from "../assets/gallery/image_10.jpg";
+import img11 from "../assets/gallery/image_11.jpg";
+
+const galleryItems = [
+  { id: 1, title: "STEM Workshop Presentation", src: img1 },
+  { id: 2, title: "Hands-on Circuit Wiring", src: img2 },
+  { id: 3, title: "Robotics & Microcontroller Debugging", src: img3 },
+  { id: 4, title: "Design Thinking & Physical Computing", src: img4 },
+  { id: 5, title: "Computer Lab Workstation Session", src: img5 },
+  { id: 6, title: "Innovation Lab Setup", src: img6 },
+  { id: 7, title: "Group Hardware Prototyping", src: img7 },
+  { id: 8, title: "Electrical Measurements & Testing", src: img8 },
+  { id: 9, title: "Wireless Telemetry & Sensor Dashboard", src: img9 },
+  { id: 10, title: "Robotics Actuation & Kinematics", src: img10 },
+  { id: 11, title: "Workshop Tooling & Soldering Station", src: img11 },
+];
 
 function Learning() {
+  const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+  const [liked, setLiked] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Escape") setSelectedImageIndex(null);
+      if (e.key === "ArrowLeft") handlePrevImage();
+      if (e.key === "ArrowRight") handleNextImage();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedImageIndex]);
+
+  const handlePrevImage = () => {
+    if (selectedImageIndex === null) return;
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? galleryItems.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextImage = () => {
+    if (selectedImageIndex === null) return;
+    setSelectedImageIndex((prev) =>
+      prev === galleryItems.length - 1 ? 0 : prev + 1
+    );
+  };
+
   return (
-    <main className="w-full bg-white font-sans text-slate-800">
-      {/* ─── Top Background Banner ─── */}
-      <div className="relative h-[280px] sm:h-[360px] md:h-[420px] w-full overflow-hidden bg-slate-900">
-        <img
-          src={bannerBg}
-          alt="STEMSAGE Learning Banner"
-          className="h-full w-full object-cover object-center opacity-85 blur-[1px]"
-          onError={(e) => { e.currentTarget.src = eduKitBg; }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
-      </div>
+    <main className="w-full bg-white font-sans text-slate-800 min-h-screen">
+      {/* ─── Minimal Header Title matching Wix Reference ─── */}
+      <section className="pt-12 pb-8 px-4 text-center">
+        <h1 className="text-4xl sm:text-5xl md:text-6xl font-normal text-slate-900 tracking-tight inline-block border-b-2 border-slate-900 pb-1">
+          STEM Workshops
+        </h1>
+      </section>
 
-      {/* ─── Floating White Intro Box ─── */}
-      <div className="relative z-10 mx-auto -mt-28 sm:-mt-36 md:-mt-48 max-w-4xl px-4 sm:px-6">
-        <div className="bg-white border border-slate-200/90 shadow-xl px-6 py-10 sm:px-12 sm:py-14 md:px-16 text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-slate-900 mb-6">
-            Learning Hub <span className="text-red-600 font-medium">Coming Soon</span>
-          </h1>
-          <p className="mx-auto max-w-3xl text-sm sm:text-base md:text-lg leading-relaxed text-slate-600 font-normal mb-8">
-            We are hard at work building an all-in-one interactive STEM learning hub. Soon you'll be able to access guided robotics, IoT, 3D design, and coding modules right here.
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              to="/courses"
-              className="inline-flex items-center justify-center rounded-full bg-red-600 px-7 py-3 text-xs sm:text-sm font-bold text-white shadow-md transition-all duration-300 hover:bg-red-700 hover:scale-105"
+      {/* ─── Pinterest Masonry Gallery Grid ─── */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-20 pt-4">
+        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+          {galleryItems.map((item, index) => (
+            <div
+              key={item.id}
+              onClick={() => setSelectedImageIndex(index)}
+              className="break-inside-avoid group relative overflow-hidden bg-slate-100 cursor-pointer border border-slate-200/60 shadow-xs hover:shadow-md transition-all duration-300"
             >
-              Explore Courses
-            </Link>
-            <Link
-              to="/contact"
-              className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-7 py-3 text-xs sm:text-sm font-bold text-slate-700 transition-all duration-300 hover:bg-slate-50"
-            >
-              Contact Us
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* ─── Feature Cards Grid ─── */}
-      <section className="mx-auto max-w-6xl px-5 sm:px-8 pt-16 sm:pt-24 pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="bg-white border border-slate-300 overflow-hidden shadow-xs p-8 text-center flex flex-col items-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-3xl text-white mb-5">
-              🚀
+              <img
+                src={item.src}
+                alt={item.title}
+                className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                <span className="bg-white/90 text-slate-900 rounded-full p-2.5 shadow-md">
+                  <Maximize2 size={16} />
+                </span>
+              </div>
             </div>
-            <h3 className="text-xl font-medium text-slate-900 mb-3">Interactive Courses</h3>
-            <p className="text-sm text-slate-600 leading-relaxed">Structured STEM modules tailored for hands-on, step-by-step learning.</p>
-          </div>
-
-          <div className="bg-white border border-slate-300 overflow-hidden shadow-xs p-8 text-center flex flex-col items-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-3xl text-white mb-5">
-              🛠️
-            </div>
-            <h3 className="text-xl font-medium text-slate-900 mb-3">Live Workshops</h3>
-            <p className="text-sm text-slate-600 leading-relaxed">Experiential, mentor-guided sessions for real-world application.</p>
-          </div>
-
-          <div className="bg-white border border-slate-300 overflow-hidden shadow-xs p-8 text-center flex flex-col items-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-900 text-3xl text-white mb-5">
-              🔬
-            </div>
-            <h3 className="text-xl font-medium text-slate-900 mb-3">Project Labs</h3>
-            <p className="text-sm text-slate-600 leading-relaxed">Build portfolio-ready hardware & software creations from scratch.</p>
-          </div>
+          ))}
         </div>
       </section>
+
+      {/* ─── Fullscreen White Lightbox Modal (Matching Wix Reference) ─── */}
+      {selectedImageIndex !== null && (
+        <div className="fixed inset-0 z-[9999] bg-white flex items-center justify-center p-4 sm:p-8 animate-fadeIn">
+          {/* Top Bar Actions */}
+          <div className="absolute top-6 left-6 right-6 flex items-center justify-between z-50">
+            <div className="flex items-center gap-4 text-slate-700">
+              <button
+                type="button"
+                onClick={() => setIsFullscreen(!isFullscreen)}
+                className="p-1.5 hover:text-black transition cursor-pointer"
+                title="Fullscreen"
+              >
+                <Maximize2 size={20} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setLiked(!liked)}
+                className="p-1.5 hover:text-red-600 transition cursor-pointer"
+                title="Like"
+              >
+                <Heart size={20} className={liked ? "fill-red-600 text-red-600" : ""} />
+              </button>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setSelectedImageIndex(null)}
+              className="p-1.5 text-slate-800 hover:text-slate-500 transition cursor-pointer"
+              aria-label="Close"
+            >
+              <X size={28} />
+            </button>
+          </div>
+
+          {/* Left Navigation Arrow */}
+          <button
+            type="button"
+            onClick={handlePrevImage}
+            className="absolute left-6 top-1/2 -translate-y-1/2 z-50 p-2 text-slate-700 hover:text-black transition cursor-pointer"
+            aria-label="Previous"
+          >
+            <ChevronLeft size={36} />
+          </button>
+
+          {/* Right Navigation Arrow */}
+          <button
+            type="button"
+            onClick={handleNextImage}
+            className="absolute right-6 top-1/2 -translate-y-1/2 z-50 p-2 text-slate-700 hover:text-black transition cursor-pointer"
+            aria-label="Next"
+          >
+            <ChevronRight size={36} />
+          </button>
+
+          {/* Centered Large Image */}
+          <div className="flex items-center justify-center w-full h-[85vh] max-w-[85vw] mx-auto pointer-events-none">
+            <img
+              src={galleryItems[selectedImageIndex].src}
+              alt={galleryItems[selectedImageIndex].title}
+              className="h-[80vh] max-h-[84vh] max-w-[82vw] w-auto object-contain transition-all duration-300 pointer-events-auto shadow-sm"
+              style={{ minHeight: "65vh" }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <Footer />
