@@ -2,7 +2,7 @@ import { useState } from "react";
 import Footer from "../components/common/Footer";
 import PageHero from "../components/mock/PageHero";
 import FilterBar from "../components/mock/FilterBar";
-import MockModal from "../components/mock/MockModal";
+import Modal from "../components/mock/Modal";
 import StatusBadge from "../components/mock/StatusBadge";
 import { products, productCategories } from "../data/products";
 
@@ -80,7 +80,7 @@ function ProductCard({ product, onView, onAddToCart }) {
 function CartPanel({ cartItems, onRemove, onQtyChange, onClose }) {
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
   return (
-    <MockModal isOpen title="🛒 Cart" onClose={onClose}>
+    <Modal isOpen title="🛒 Cart" onClose={onClose}>
       {cartItems.length === 0 ? (
         <div style={{ textAlign: "center", padding: "30px 0", color: "#94a3b8" }}>
           <div style={{ fontSize: "40px", marginBottom: "12px" }}>🛒</div>
@@ -121,7 +121,7 @@ function CartPanel({ cartItems, onRemove, onQtyChange, onClose }) {
           <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", textAlign: "center" }}>Demo page — no real purchase is made</p>
         </div>
       )}
-    </MockModal>
+    </Modal>
   );
 }
 
@@ -201,7 +201,7 @@ function Store() {
 
       {/* Product Detail Modal */}
       {viewProduct && (
-        <MockModal isOpen={!!viewProduct} onClose={() => setViewProduct(null)} title={viewProduct.name}>
+        <Modal isOpen={!!viewProduct} onClose={() => setViewProduct(null)} title={viewProduct.name}>
           <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
             <div style={{ fontSize: "48px", textAlign: "center", padding: "20px", background: "#f8fafc", borderRadius: "12px" }}>
               {ICON_MAP[viewProduct.category] || "📦"}
@@ -221,7 +221,7 @@ function Store() {
               </button>
             </div>
           </div>
-        </MockModal>
+        </Modal>
       )}
 
       {cartOpen && (

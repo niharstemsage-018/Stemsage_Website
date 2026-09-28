@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-function MockModal({ isOpen, onClose, title, children }) {
+function Modal({ isOpen, onClose, title, children }) {
   useEffect(() => {
     if (isOpen) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -79,4 +79,4 @@ function MockModal({ isOpen, onClose, title, children }) {
   );
 }
 
-export default MockModal;
+export default Modal;

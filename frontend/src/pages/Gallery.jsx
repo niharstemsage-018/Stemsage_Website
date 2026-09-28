@@ -28,7 +28,7 @@ const galleryItems = [
   { id: 11, title: "Workshop Tooling & Soldering Station", src: img11 },
 ];
 
-function Learning() {
+function Gallery() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [liked, setLiked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -164,4 +164,4 @@ function Learning() {
   );
 }
 
-export default Learning;
+export default Gallery;

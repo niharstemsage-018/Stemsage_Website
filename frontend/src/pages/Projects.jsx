@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../components/common/Footer";
 import FilterBar from "../components/mock/FilterBar";
-import MockModal from "../components/mock/MockModal";
+import Modal from "../components/mock/Modal";
 import StatusBadge from "../components/mock/StatusBadge";
 import { projects, projectCategories } from "../data/projects";
 
@@ -20,7 +20,7 @@ const gridBg = {
 function ProjectDetailModal({ project, onClose }) {
   if (!project) return null;
   return (
-    <MockModal isOpen={!!project} onClose={onClose} title={project.title}>
+    <Modal isOpen={!!project} onClose={onClose} title={project.title}>
       <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
         {/* Status + Category */}
         <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
@@ -59,7 +59,7 @@ function ProjectDetailModal({ project, onClose }) {
           Close
         </button>
       </div>
-    </MockModal>
+    </Modal>
   );
 }
 

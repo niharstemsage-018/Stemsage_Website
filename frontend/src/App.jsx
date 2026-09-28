@@ -8,7 +8,7 @@ import Forum from "./pages/Forum";
 import Courses from "./pages/Courses";
 import Workshops from "./pages/Workshops";
 import Store from "./pages/Store";
-import Learning from "./pages/Learning";
+import Gallery from "./pages/Gallery";
 import Projects from "./pages/Projects";
 import StudentProjects from "./pages/StudentProjects";
 import Contact from "./pages/Contact";
@@ -27,7 +27,7 @@ function App() {
         <Route path="/courses" element={<Courses />} />
         <Route path="/workshops" element={<Workshops />} />
         <Route path="/store" element={<Store />} />
-        <Route path="/learning" element={<Learning />} />
+        <Route path="/learning" element={<Gallery />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/student-projects" element={<StudentProjects />} />
         <Route path="/contact" element={<Contact />} />

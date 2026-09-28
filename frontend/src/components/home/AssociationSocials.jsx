@@ -1,7 +1,7 @@
 import React from "react";
 
 import cpLogo from "../../assets/association_logos/CP.png";
-import droniLogo from "../../assets/association_logos/DroniCulture~mv2.webp";
+import droniLogo from "../../assets/association_logos/DroniCulture.webp";
 import madariLogo from "../../assets/association_logos/MadariVeda.jpg";
 import mentorLogo from "../../assets/association_logos/MentorPrep.webp";
 import nmimsLogo from "../../assets/association_logos/NMIMS.svg";

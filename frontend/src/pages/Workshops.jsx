@@ -2,7 +2,7 @@ import { useState } from "react";
 import Footer from "../components/common/Footer";
 import PageHero from "../components/mock/PageHero";
 import FilterBar from "../components/mock/FilterBar";
-import MockModal from "../components/mock/MockModal";
+import Modal from "../components/mock/Modal";
 import StatusBadge from "../components/mock/StatusBadge";
 import { workshops, workshopCategories } from "../data/workshops";
 
@@ -135,7 +135,7 @@ function RegistrationModal({ workshop, onClose }) {
   };
 
   return (
-    <MockModal isOpen={!!workshop} onClose={() => { onClose(); setSubmitted(false); setForm({ name: "", email: "", phone: "" }); }} title="Workshop Registration">
+    <Modal isOpen={!!workshop} onClose={() => { onClose(); setSubmitted(false); setForm({ name: "", email: "", phone: "" }); }} title="Workshop Registration">
       {submitted ? (
         <div style={{ textAlign: "center", padding: "20px 0" }}>
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>✅</div>
@@ -181,14 +181,14 @@ function RegistrationModal({ workshop, onClose }) {
           </p>
         </form>
       )}
-    </MockModal>
+    </Modal>
   );
 }
 
 function WorkshopDetailModal({ workshop, onClose, onRegister }) {
   if (!workshop) return null;
   return (
-    <MockModal isOpen={!!workshop} onClose={onClose} title={workshop.title}>
+    <Modal isOpen={!!workshop} onClose={onClose} title={workshop.title}>
       <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
         <StatusBadge status={workshop.status} />
         <p style={{ margin: 0, color: "#475569", fontSize: "14px", lineHeight: 1.7 }}>{workshop.description}</p>
@@ -227,7 +227,7 @@ function WorkshopDetailModal({ workshop, onClose, onRegister }) {
           {workshop.status === "FULL" ? "Workshop Full" : "Register Interest"}
         </button>
       </div>
-    </MockModal>
+    </Modal>
   );
 }
 
