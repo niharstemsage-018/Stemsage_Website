@@ -11,8 +11,15 @@ const contactDetails = [
   {
     icon: "✉️",
     label: "Email Us",
-    value: "stemsage.techworld.llp@gmail.com",
-    href: "mailto:stemsage.techworld.llp@gmail.com",
+    value: "support@stemsage.cc",
+    href: "mailto:support@stemsage.cc",
+    sub: "We typically reply within 24 hours",
+  },
+  {
+    icon: "📞",
+    label: "Call Us",
+    value: "+91 9922552891",
+    href: "tel:+919922552891",
     sub: "We typically reply within 24 hours",
   },
   {
@@ -22,13 +29,13 @@ const contactDetails = [
     href: null,
     sub: "STEMSAGE Techworld LLP",
   },
-  {
-    icon: "🕐",
-    label: "Working Hours",
-    value: "Mon – Sat, 9 AM – 6 PM",
-    href: null,
-    sub: "IST (Indian Standard Time)",
-  },
+  // {
+  //   icon: "🕐",
+  //   label: "Working Hours",
+  //   value: "Mon – Sat, 9 AM – 6 PM",
+  //   href: null,
+  //   sub: "IST (Indian Standard Time)",
+  // },
 ];
 
 const SUBJECTS = [
@@ -266,7 +273,7 @@ function Contact() {
 
             {/* Direct Email CTA */}
             <a
-              href="mailto:stemsage.techworld.llp@gmail.com?subject=Enquiry from Website"
+              href="mailto:support@stemsage.cc?subject=Enquiry from Website"
               style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", padding: "13px 24px", background: "#0f172a", color: "white", borderRadius: "9999px", fontWeight: 700, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none", transition: "background 0.15s" }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "#e11d48")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "#0f172a")}
