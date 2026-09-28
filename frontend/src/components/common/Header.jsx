@@ -63,15 +63,18 @@ const navItems = [
     isMegaMenu: true,
   },
   { label: "Services", path: "/services" },
+  { label: "Our Store", path: "/store" },
   {
-    label: "Projects",
-    path: "/projects",
+    label: "Our Forum",
+    path: "/forum",
+    isHorizontal: true,
     dropdown: [
-      { label: "Our Projects", path: "/projects", desc: "STEMSAGE institutional projects", icon: "🚀" },
-      { label: "Student Projects", path: "/student-projects", desc: "Projects built by our students", icon: "🎓" },
+      { label: "Blog", path: "/forum" },
+      { label: "Gallery", path: "/learning" },
+      { label: "Projects", path: "/projects" },
+      { label: "Student Projects", path: "/student-projects" },
     ],
   },
-  { label: "Community", path: "/forum" },
   { label: "Contact", path: "/contact" },
 ];
 
@@ -212,9 +215,9 @@ function DropdownMenu({ items }) {
         top: "100%",
         left: "50%",
         transform: "translateX(-50%)",
-        paddingTop: "10px",
+        paddingTop: "12px",
         zIndex: 100,
-        minWidth: "260px",
+        minWidth: "220px",
       }}
     >
       <div
@@ -222,45 +225,248 @@ function DropdownMenu({ items }) {
           background: "white",
           border: "1px solid #e2e8f0",
           borderRadius: "12px",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.12)",
-          padding: "8px",
+          boxShadow: "0 20px 45px -10px rgba(0,0,0,0.12), 0 0 15px rgba(0,0,0,0.04)",
+          padding: "18px 22px",
+          position: "relative",
         }}
       >
-        <div style={{ position: "absolute", top: "5px", left: "50%", transform: "translateX(-50%) rotate(45deg)", width: "10px", height: "10px", background: "white", border: "1px solid #e2e8f0", borderBottom: "none", borderRight: "none" }} />
+        {/* Pointer Arrow */}
+        <div
+          style={{
+            position: "absolute",
+            top: "6px",
+            left: "50%",
+            transform: "translateX(-50%) rotate(45deg)",
+            width: "12px",
+            height: "12px",
+            background: "white",
+            borderLeft: "1px solid #e2e8f0",
+            borderTop: "1px solid #e2e8f0",
+          }}
+        />
 
-        {items.map((item) =>
-          item.disabled ? (
-            <div
-              key={item.label}
-              style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", borderRadius: "8px", opacity: 0.5, cursor: "not-allowed" }}
-            >
-              <span style={{ fontSize: "20px", flexShrink: 0 }}>{item.icon}</span>
-              <div>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: "#94a3b8", display: "flex", alignItems: "center", gap: "6px" }}>
+        <ul className="flex flex-col gap-2.5 text-left relative z-10">
+          {items.map((item) =>
+            item.disabled ? (
+              <li key={item.label}>
+                <span className="text-[13px] font-normal text-slate-400 cursor-not-allowed block py-0.5">
+                  {item.label} (Soon)
+                </span>
+              </li>
+            ) : (
+              <li key={item.label}>
+                <Link
+                  to={item.path}
+                  className="text-[13px] font-normal text-slate-700 hover:text-blue-600 transition-colors block py-0.5 text-left w-full cursor-pointer"
+                >
                   {item.label}
-                  <span style={{ fontSize: "9px", fontWeight: 700, background: "#f1f5f9", color: "#94a3b8", padding: "1px 6px", borderRadius: "9999px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Soon</span>
-                </div>
-                <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "1px" }}>{item.desc}</div>
-              </div>
-            </div>
-          ) : (
+                </Link>
+              </li>
+            )
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Horizontal Desktop Dropdown Sub-Bar (Courses Mega Menu Style) ─── */
+function HorizontalSubNav({ items, onClose }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "100%",
+        left: "50%",
+        transform: "translateX(-50%)",
+        paddingTop: "12px",
+        zIndex: 100,
+        width: "620px",
+        maxWidth: "calc(100vw - 32px)",
+      }}
+    >
+      <div
+        style={{
+          background: "white",
+          border: "1px solid #e2e8f0",
+          borderRadius: "16px",
+          boxShadow: "0 20px 45px -10px rgba(0,0,0,0.12), 0 0 15px rgba(0,0,0,0.04)",
+          padding: "20px 24px",
+          position: "relative",
+        }}
+      >
+        {/* Pointer Arrow */}
+        <div
+          style={{
+            position: "absolute",
+            top: "6px",
+            left: "50%",
+            transform: "translateX(-50%) rotate(45deg)",
+            width: "12px",
+            height: "12px",
+            background: "white",
+            borderLeft: "1px solid #e2e8f0",
+            borderTop: "1px solid #e2e8f0",
+          }}
+        />
+
+        <div className="grid grid-cols-4 gap-4 text-center items-center relative z-10">
+          {items.map((item) => (
             <Link
               key={item.label}
               to={item.path}
-              style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", borderRadius: "8px", textDecoration: "none", transition: "background 0.15s" }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+              onClick={onClose}
+              className="text-[13.5px] font-normal text-slate-700 hover:text-blue-600 transition-colors py-1 px-2 inline-block text-center cursor-pointer whitespace-nowrap"
             >
-              <span style={{ fontSize: "20px", flexShrink: 0 }}>{item.icon}</span>
-              <div>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{item.label}</div>
-                <div style={{ fontSize: "11px", color: "#64748b", marginTop: "1px" }}>{item.desc}</div>
-              </div>
+              {item.label}
             </Link>
-          )
-        )}
+          ))}
+        </div>
       </div>
     </div>
+  );
+}
+
+/* ─── Cart Icon SVG Component ─── */
+const CartIcon = ({ className = "w-5 h-5 fill-current" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" className={className}>
+    <path d="M24-16C10.7-16 0-5.3 0 8S10.7 32 24 32l45.3 0c3.9 0 7.2 2.8 7.9 6.6l52.1 286.3c6.2 34.2 36 59.1 70.8 59.1L456 384c13.3 0 24-10.7 24-24s-10.7-24-24-24l-255.9 0c-11.6 0-21.5-8.3-23.6-19.7l-5.1-28.3 303.6 0c30.8 0 57.2-21.9 62.9-52.2L568.9 69.9C572.6 50.2 557.5 32 537.4 32l-412.7 0-.4-2c-4.8-26.6-28-46-55.1-46L24-16zM208 512a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm224 0a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"/>
+  </svg>
+);
+
+/* ─── Right Cart Sidebar Drawer (Matching Wix Reference Image) ─── */
+function RightCartDrawer({ isOpen, onClose, cartItems = [], onRemove, onQtyChange }) {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  const totalCount = cartItems.reduce((sum, item) => sum + (item.qty || 1), 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * (item.qty || 1), 0);
+
+  return (
+    <>
+      {/* Semi-Transparent Backdrop Overlay */}
+      <div
+        className="fixed inset-0 z-[9998] bg-slate-900/30 backdrop-blur-xs transition-opacity duration-300"
+        onClick={onClose}
+      />
+
+      {/* Right Drawer Panel */}
+      <aside
+        className="fixed inset-y-0 right-0 z-[9999] flex w-full max-w-sm sm:max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out border-l border-slate-200/80"
+        aria-label="Shopping Cart Drawer"
+      >
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-slate-200">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+            Cart <span className="font-normal text-slate-500 text-sm">({totalCount} {totalCount === 1 ? "item" : "items"})</span>
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-1.5 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition cursor-pointer"
+            aria-label="Close Cart"
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {/* Drawer Body */}
+        <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col">
+          {cartItems.length === 0 ? (
+            /* Empty State Matching Wix Reference Screenshot */
+            <div className="flex-1 flex flex-col items-center justify-center text-center py-12">
+              <p className="text-base text-slate-600 font-medium mb-6">
+                Your cart is empty.
+              </p>
+              <Link
+                to="/store"
+                onClick={onClose}
+                className="inline-flex items-center justify-center rounded-full bg-slate-900 px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-red-600 shadow-sm"
+              >
+                Browse Our Store
+              </Link>
+            </div>
+          ) : (
+            /* Items List */
+            <div className="space-y-4">
+              {cartItems.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex items-center justify-between gap-4 p-3 rounded-xl border border-slate-200/80 bg-slate-50/50"
+                >
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-bold text-slate-900 truncate">
+                      {item.name || item.title}
+                    </h4>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      ₹{item.price ? item.price.toLocaleString() : "0"} each
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center border border-slate-300 rounded-lg bg-white overflow-hidden">
+                      <button
+                        type="button"
+                        onClick={() => onQtyChange && onQtyChange(item.id, -1)}
+                        className="px-2 py-0.5 text-xs font-bold text-slate-600 hover:bg-slate-100"
+                      >
+                        -
+                      </button>
+                      <span className="px-2 text-xs font-bold text-slate-800">
+                        {item.qty || 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => onQtyChange && onQtyChange(item.id, 1)}
+                        className="px-2 py-0.5 text-xs font-bold text-slate-600 hover:bg-slate-100"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => onRemove && onRemove(item.id)}
+                      className="p-1 text-slate-400 hover:text-red-600 transition"
+                      title="Remove Item"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Drawer Footer (if items present) */}
+        {cartItems.length > 0 && (
+          <div className="p-6 border-t border-slate-200 bg-slate-50/50 space-y-4">
+            <div className="flex items-center justify-between text-base font-bold text-slate-900">
+              <span>Subtotal</span>
+              <span>₹{subtotal.toLocaleString()}</span>
+            </div>
+            <Link
+              to="/contact"
+              onClick={onClose}
+              className="flex w-full items-center justify-center rounded-xl bg-red-600 py-3 text-xs font-bold uppercase tracking-wider text-white shadow-md transition hover:bg-red-700"
+            >
+              Proceed to Checkout
+            </Link>
+          </div>
+        )}
+      </aside>
+    </>
   );
 }
 
@@ -269,8 +475,37 @@ function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [comingSoonTitle, setComingSoonTitle] = useState(null);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartItems, setCartItems] = useState([]);
   const location = useLocation();
   const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    function handleCartEvent(e) {
+      if (e.detail?.items !== undefined) {
+        setCartItems(e.detail.items);
+      }
+      if (e.detail?.open) {
+        setIsCartOpen(true);
+      }
+    }
+    window.addEventListener("stemsage-cart-event", handleCartEvent);
+    return () => window.removeEventListener("stemsage-cart-event", handleCartEvent);
+  }, []);
+
+  const handleRemoveCartItem = (id) => {
+    const updated = cartItems.filter((i) => i.id !== id);
+    setCartItems(updated);
+    window.dispatchEvent(new CustomEvent("stemsage-cart-event", { detail: { items: updated } }));
+  };
+
+  const handleChangeQty = (id, delta) => {
+    const updated = cartItems
+      .map((i) => (i.id === id ? { ...i, qty: Math.max(1, (i.qty || 1) + delta) } : i))
+      .filter((i) => (i.qty || 1) > 0);
+    setCartItems(updated);
+    window.dispatchEvent(new CustomEvent("stemsage-cart-event", { detail: { items: updated } }));
+  };
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -398,7 +633,13 @@ function Header() {
                         style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
                       />
                     </Link>
-                    {isOpen && <DropdownMenu items={item.dropdown} />}
+                    {isOpen && (
+                      item.isHorizontal ? (
+                        <HorizontalSubNav items={item.dropdown} onClose={() => setOpenDropdown(null)} />
+                      ) : (
+                        <DropdownMenu items={item.dropdown} />
+                      )
+                    )}
                   </div>
                 );
               }
@@ -422,6 +663,22 @@ function Header() {
 
           {/* Desktop Right Actions */}
           <div className="hidden items-center gap-3.5 lg:flex">
+            {/* Cart Button */}
+            <button
+              type="button"
+              onClick={() => setIsCartOpen(true)}
+              className="relative flex items-center justify-center p-2 text-slate-700 hover:text-red-600 transition focus:outline-none rounded-lg hover:bg-slate-50 cursor-pointer"
+              title="View Cart"
+              aria-label="View Shopping Cart"
+            >
+              <CartIcon className="w-5 h-5 fill-current" />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-xs">
+                  {cartItems.reduce((s, i) => s + (i.qty || 1), 0)}
+                </span>
+              )}
+            </button>
+
             <Link
               to="/services"
               className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 shadow-sm"
@@ -430,8 +687,22 @@ function Header() {
             </Link>
           </div>
 
-          {/* Mobile Menu Toggle */}
+          {/* Mobile Right Actions */}
           <div className="flex items-center gap-2 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setIsCartOpen(true)}
+              className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-700 transition hover:bg-slate-100 focus:outline-none"
+              aria-label="Open Cart"
+            >
+              <CartIcon className="w-5 h-5 fill-current" />
+              {cartItems.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-bold text-white shadow-xs">
+                  {cartItems.reduce((s, i) => s + (i.qty || 1), 0)}
+                </span>
+              )}
+            </button>
+
             <button
               type="button"
               aria-expanded={isMobileMenuOpen}
@@ -589,6 +860,15 @@ function Header() {
       <ComingSoonModal
         title={comingSoonTitle}
         onClose={() => setComingSoonTitle(null)}
+      />
+
+      {/* Right Cart Sidebar Drawer */}
+      <RightCartDrawer
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cartItems={cartItems}
+        onRemove={handleRemoveCartItem}
+        onQtyChange={handleChangeQty}
       />
     </>
   );

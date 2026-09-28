@@ -2,7 +2,7 @@ import { useState } from "react";
 import Footer from "../components/common/Footer";
 import PageHero from "../components/mock/PageHero";
 import FilterBar from "../components/mock/FilterBar";
-import MockModal from "../components/mock/MockModal";
+import Modal from "../components/mock/Modal";
 import { studentProjects, studentProjectCategories } from "../data/studentProjects";
 
 const ICON_MAP = {
@@ -75,7 +75,7 @@ function StudentProjectCard({ project, onView }) {
 function ProjectDetailModal({ project, onClose }) {
   if (!project) return null;
   return (
-    <MockModal isOpen={!!project} onClose={onClose} title={project.title}>
+    <Modal isOpen={!!project} onClose={onClose} title={project.title}>
       <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "#f8fafc", borderRadius: "10px" }}>
           <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "linear-gradient(135deg, #e11d48, #0f172a)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: "16px" }}>
@@ -97,7 +97,7 @@ function ProjectDetailModal({ project, onClose }) {
           </div>
         </div>
       </div>
-    </MockModal>
+    </Modal>
   );
 }
 
@@ -117,7 +117,7 @@ function SubmitModal({ isOpen, onClose }) {
   };
 
   return (
-    <MockModal isOpen={isOpen} onClose={handleClose} title="Submit Your Project">
+    <Modal isOpen={isOpen} onClose={handleClose} title="Submit Your Project">
       {submitted ? (
         <div style={{ textAlign: "center", padding: "20px 0" }}>
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>🎉</div>
@@ -181,7 +181,7 @@ function SubmitModal({ isOpen, onClose }) {
           <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", textAlign: "center" }}>Demo only — no data is submitted</p>
         </form>
       )}
-    </MockModal>
+    </Modal>
   );
 }
 

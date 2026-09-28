@@ -2,7 +2,7 @@ import { useState } from "react";
 import Footer from "../components/common/Footer";
 import PageHero from "../components/mock/PageHero";
 import FilterBar from "../components/mock/FilterBar";
-import MockModal from "../components/mock/MockModal";
+import Modal from "../components/mock/Modal";
 import StatusBadge from "../components/mock/StatusBadge";
 import { workshops, workshopCategories } from "../data/workshops";
 
@@ -13,6 +13,7 @@ const ICON_MAP = {
 
 function WorkshopCard({ workshop, onRegister, onView }) {
   const isFull = workshop.status === "FULL";
+  const isComingSoon = workshop.status === "COMING SOON";
   return (
     <div
       style={{
@@ -75,9 +76,14 @@ function WorkshopCard({ workshop, onRegister, onView }) {
           ))}
         </div>
 
-        {!isFull && (
+        {!isFull && !isComingSoon && (
           <p style={{ margin: 0, fontSize: "12px", color: workshop.seatsLeft <= 5 ? "#d97706" : "#475569", fontWeight: 600 }}>
             {workshop.seatsLeft} seats remaining
+          </p>
+        )}
+        {isComingSoon && (
+          <p style={{ margin: 0, fontSize: "12px", color: "#6b21a8", fontWeight: 600 }}>
+            Registration opening soon
           </p>
         )}
 
@@ -106,7 +112,7 @@ function WorkshopCard({ workshop, onRegister, onView }) {
             style={{
               flex: 1,
               padding: "9px",
-              background: isFull ? "#e2e8f0" : "#e11d48",
+              background: isFull ? "#e2e8f0" : isComingSoon ? "#7c3aed" : "#e11d48",
               color: isFull ? "#94a3b8" : "white",
               border: "none",
               borderRadius: "9999px",
@@ -117,7 +123,7 @@ function WorkshopCard({ workshop, onRegister, onView }) {
               cursor: isFull ? "not-allowed" : "pointer",
             }}
           >
-            {isFull ? "Full" : "Register"}
+            {isFull ? "Full" : isComingSoon ? "Notify Me" : "Register"}
           </button>
         </div>
       </div>
@@ -135,7 +141,7 @@ function RegistrationModal({ workshop, onClose }) {
   };
 
   return (
-    <MockModal isOpen={!!workshop} onClose={() => { onClose(); setSubmitted(false); setForm({ name: "", email: "", phone: "" }); }} title="Workshop Registration">
+    <Modal isOpen={!!workshop} onClose={() => { onClose(); setSubmitted(false); setForm({ name: "", email: "", phone: "" }); }} title="Workshop Registration">
       {submitted ? (
         <div style={{ textAlign: "center", padding: "20px 0" }}>
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>✅</div>
@@ -181,14 +187,16 @@ function RegistrationModal({ workshop, onClose }) {
           </p>
         </form>
       )}
-    </MockModal>
+    </Modal>
   );
 }
 
 function WorkshopDetailModal({ workshop, onClose, onRegister }) {
   if (!workshop) return null;
+  const isFull = workshop.status === "FULL";
+  const isComingSoon = workshop.status === "COMING SOON";
   return (
-    <MockModal isOpen={!!workshop} onClose={onClose} title={workshop.title}>
+    <Modal isOpen={!!workshop} onClose={onClose} title={workshop.title}>
       <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
         <StatusBadge status={workshop.status} />
         <p style={{ margin: 0, color: "#475569", fontSize: "14px", lineHeight: 1.7 }}>{workshop.description}</p>
@@ -198,7 +206,7 @@ function WorkshopDetailModal({ workshop, onClose, onRegister }) {
             ["Duration", workshop.duration],
             ["Location", workshop.location],
             ["Level", workshop.level],
-            ["Seats", `${workshop.seatsLeft}/${workshop.seats} available`],
+            ["Seats", isComingSoon ? "TBA" : `${workshop.seatsLeft}/${workshop.seats} available`],
             ["Schedule", workshop.detail.schedule],
           ].map(([k, v]) => (
             <div key={k} style={{ background: "#f8fafc", borderRadius: "8px", padding: "10px 14px" }}>
@@ -217,17 +225,18 @@ function WorkshopDetailModal({ workshop, onClose, onRegister }) {
         </div>
         <button
           onClick={() => { onClose(); onRegister(workshop); }}
-          disabled={workshop.status === "FULL"}
+          disabled={isFull}
           style={{
-            padding: "12px", background: workshop.status === "FULL" ? "#e2e8f0" : "#e11d48",
-            color: workshop.status === "FULL" ? "#94a3b8" : "white",
-            border: "none", borderRadius: "9999px", fontWeight: 700, fontSize: "12px", letterSpacing: "0.08em", textTransform: "uppercase", cursor: workshop.status === "FULL" ? "not-allowed" : "pointer"
+            padding: "12px",
+            background: isFull ? "#e2e8f0" : isComingSoon ? "#7c3aed" : "#e11d48",
+            color: isFull ? "#94a3b8" : "white",
+            border: "none", borderRadius: "9999px", fontWeight: 700, fontSize: "12px", letterSpacing: "0.08em", textTransform: "uppercase", cursor: isFull ? "not-allowed" : "pointer"
           }}
         >
-          {workshop.status === "FULL" ? "Workshop Full" : "Register Interest"}
+          {isFull ? "Workshop Full" : isComingSoon ? "Notify Me" : "Register Interest"}
         </button>
       </div>
-    </MockModal>
+    </Modal>
   );
 }
 
