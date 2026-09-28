@@ -143,8 +143,16 @@ function Store() {
   const addToCart = (product) => {
     setCartItems((prev) => {
       const existing = prev.find((i) => i.id === product.id);
-      if (existing) return prev.map((i) => i.id === product.id ? { ...i, qty: i.qty + 1 } : i);
-      return [...prev, { ...product, qty: 1 }];
+      const updated = existing
+        ? prev.map((i) => (i.id === product.id ? { ...i, qty: i.qty + 1 } : i))
+        : [...prev, { ...product, qty: 1 }];
+
+      window.dispatchEvent(
+        new CustomEvent("stemsage-cart-event", {
+          detail: { items: updated, open: false },
+        })
+      );
+      return updated;
     });
   };
 
@@ -167,22 +175,16 @@ function Store() {
       />
 
       <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "60px 24px" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center", justifyContent: "space-between", marginBottom: "32px" }}>
-          <h2 style={{ margin: 0, fontSize: "24px", fontWeight: 900, color: "#0f172a" }}>Products</h2>
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "24px", alignItems: "center", justifyContent: "space-between", marginBottom: "32px" }}>
+          <h2 style={{ margin: 0, fontSize: "24px", fontWeight: 900, color: "#0f172a", flexShrink: 0 }}>Products</h2>
+          <div style={{ flex: 1, minWidth: "280px", maxWidth: "650px", marginLeft: "auto" }}>
             <input
               type="text"
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              style={{ padding: "10px 18px", border: "2px solid #e2e8f0", borderRadius: "9999px", fontSize: "13px", outline: "none", color: "#0f172a", minWidth: "180px" }}
+              style={{ padding: "11px 22px", border: "2px solid #e2e8f0", borderRadius: "9999px", fontSize: "14px", outline: "none", color: "#0f172a", width: "100%", boxSizing: "border-box" }}
             />
-            <button
-              onClick={() => setCartOpen(true)}
-              style={{ padding: "10px 20px", background: "#0f172a", color: "white", border: "none", borderRadius: "9999px", fontWeight: 700, fontSize: "12px", cursor: "pointer", position: "relative" }}
-            >
-              🛒 Cart {totalItems > 0 && <span style={{ background: "#e11d48", color: "white", borderRadius: "9999px", padding: "1px 6px", fontSize: "10px", marginLeft: "4px" }}>{totalItems}</span>}
-            </button>
           </div>
         </div>
 
