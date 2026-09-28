@@ -63,15 +63,18 @@ const navItems = [
     isMegaMenu: true,
   },
   { label: "Services", path: "/services" },
+  { label: "Our Store", path: "/store" },
   {
-    label: "Projects",
-    path: "/projects",
+    label: "Our Forum",
+    path: "/forum",
+    isHorizontal: true,
     dropdown: [
-      { label: "Our Projects", path: "/projects", desc: "STEMSAGE institutional projects", icon: "🚀" },
-      { label: "Student Projects", path: "/student-projects", desc: "Projects built by our students", icon: "🎓" },
+      { label: "Blog", path: "/forum" },
+      { label: "Gallery", path: "/learning" },
+      { label: "Projects", path: "/projects" },
+      { label: "Student Projects", path: "/student-projects" },
     ],
   },
-  { label: "Community", path: "/forum" },
   { label: "Contact", path: "/contact" },
 ];
 
@@ -212,9 +215,9 @@ function DropdownMenu({ items }) {
         top: "100%",
         left: "50%",
         transform: "translateX(-50%)",
-        paddingTop: "10px",
+        paddingTop: "12px",
         zIndex: 100,
-        minWidth: "260px",
+        minWidth: "220px",
       }}
     >
       <div
@@ -222,43 +225,103 @@ function DropdownMenu({ items }) {
           background: "white",
           border: "1px solid #e2e8f0",
           borderRadius: "12px",
-          boxShadow: "0 12px 40px rgba(0,0,0,0.12)",
-          padding: "8px",
+          boxShadow: "0 20px 45px -10px rgba(0,0,0,0.12), 0 0 15px rgba(0,0,0,0.04)",
+          padding: "18px 22px",
+          position: "relative",
         }}
       >
-        <div style={{ position: "absolute", top: "5px", left: "50%", transform: "translateX(-50%) rotate(45deg)", width: "10px", height: "10px", background: "white", border: "1px solid #e2e8f0", borderBottom: "none", borderRight: "none" }} />
+        {/* Pointer Arrow */}
+        <div
+          style={{
+            position: "absolute",
+            top: "6px",
+            left: "50%",
+            transform: "translateX(-50%) rotate(45deg)",
+            width: "12px",
+            height: "12px",
+            background: "white",
+            borderLeft: "1px solid #e2e8f0",
+            borderTop: "1px solid #e2e8f0",
+          }}
+        />
 
-        {items.map((item) =>
-          item.disabled ? (
-            <div
-              key={item.label}
-              style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", borderRadius: "8px", opacity: 0.5, cursor: "not-allowed" }}
-            >
-              <span style={{ fontSize: "20px", flexShrink: 0 }}>{item.icon}</span>
-              <div>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: "#94a3b8", display: "flex", alignItems: "center", gap: "6px" }}>
+        <ul className="flex flex-col gap-2.5 text-left relative z-10">
+          {items.map((item) =>
+            item.disabled ? (
+              <li key={item.label}>
+                <span className="text-[13px] font-normal text-slate-400 cursor-not-allowed block py-0.5">
+                  {item.label} (Soon)
+                </span>
+              </li>
+            ) : (
+              <li key={item.label}>
+                <Link
+                  to={item.path}
+                  className="text-[13px] font-normal text-slate-700 hover:text-blue-600 transition-colors block py-0.5 text-left w-full cursor-pointer"
+                >
                   {item.label}
-                  <span style={{ fontSize: "9px", fontWeight: 700, background: "#f1f5f9", color: "#94a3b8", padding: "1px 6px", borderRadius: "9999px", textTransform: "uppercase", letterSpacing: "0.08em" }}>Soon</span>
-                </div>
-                <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "1px" }}>{item.desc}</div>
-              </div>
-            </div>
-          ) : (
+                </Link>
+              </li>
+            )
+          )}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Horizontal Desktop Dropdown Sub-Bar (Courses Mega Menu Style) ─── */
+function HorizontalSubNav({ items, onClose }) {
+  return (
+    <div
+      style={{
+        position: "absolute",
+        top: "100%",
+        left: "50%",
+        transform: "translateX(-50%)",
+        paddingTop: "12px",
+        zIndex: 100,
+        width: "620px",
+        maxWidth: "calc(100vw - 32px)",
+      }}
+    >
+      <div
+        style={{
+          background: "white",
+          border: "1px solid #e2e8f0",
+          borderRadius: "16px",
+          boxShadow: "0 20px 45px -10px rgba(0,0,0,0.12), 0 0 15px rgba(0,0,0,0.04)",
+          padding: "20px 24px",
+          position: "relative",
+        }}
+      >
+        {/* Pointer Arrow */}
+        <div
+          style={{
+            position: "absolute",
+            top: "6px",
+            left: "50%",
+            transform: "translateX(-50%) rotate(45deg)",
+            width: "12px",
+            height: "12px",
+            background: "white",
+            borderLeft: "1px solid #e2e8f0",
+            borderTop: "1px solid #e2e8f0",
+          }}
+        />
+
+        <div className="grid grid-cols-4 gap-4 text-center items-center relative z-10">
+          {items.map((item) => (
             <Link
               key={item.label}
               to={item.path}
-              style={{ display: "flex", alignItems: "center", gap: "12px", padding: "10px 12px", borderRadius: "8px", textDecoration: "none", transition: "background 0.15s" }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#f8fafc")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+              onClick={onClose}
+              className="text-[13.5px] font-normal text-slate-700 hover:text-blue-600 transition-colors py-1 px-2 inline-block text-center cursor-pointer whitespace-nowrap"
             >
-              <span style={{ fontSize: "20px", flexShrink: 0 }}>{item.icon}</span>
-              <div>
-                <div style={{ fontSize: "13px", fontWeight: 700, color: "#0f172a" }}>{item.label}</div>
-                <div style={{ fontSize: "11px", color: "#64748b", marginTop: "1px" }}>{item.desc}</div>
-              </div>
+              {item.label}
             </Link>
-          )
-        )}
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -398,7 +461,13 @@ function Header() {
                         style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
                       />
                     </Link>
-                    {isOpen && <DropdownMenu items={item.dropdown} />}
+                    {isOpen && (
+                      item.isHorizontal ? (
+                        <HorizontalSubNav items={item.dropdown} onClose={() => setOpenDropdown(null)} />
+                      ) : (
+                        <DropdownMenu items={item.dropdown} />
+                      )
+                    )}
                   </div>
                 );
               }
