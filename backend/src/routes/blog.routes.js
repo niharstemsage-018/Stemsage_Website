@@ -81,21 +81,56 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
-/**
- * @route   POST /api/blogs
- * @desc    Create a new blog post (Admin only)
- * @access  Private (Admin)
- */
-router.post('/', protect, async (req, res) => {
+const User = require('../models/User');
+
+// Middleware allowing any user (authenticated or guest fallback) to post
+const optionalAuth = async (req, res, next) => {
   try {
-    // Only admin can create blogs
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: 'Forbidden: Admin access required to create blog posts.'
-      });
+    let token;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
     }
 
+    if (token) {
+      try {
+        const { verifyToken } = require('../utils/jwt');
+        const decoded = verifyToken(token);
+        const user = await User.findById(decoded.userId).select('-password');
+        if (user && user.isActive) {
+          req.user = user;
+          return next();
+        }
+      } catch (err) {
+        // Token invalid/expired, fall through to guest author
+      }
+    }
+
+    // Default guest author for public postings
+    let guestUser = await User.findOne({ email: 'community@stemsage.cc' });
+    if (!guestUser) {
+      guestUser = await User.create({
+        name: 'Community Member',
+        email: 'community@stemsage.cc',
+        role: 'user',
+        authProvider: 'local',
+        isEmailVerified: true,
+        isActive: true
+      });
+    }
+    req.user = guestUser;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route   POST /api/blogs
+ * @desc    Create a new blog post (Public / Anyone)
+ * @access  Public
+ */
+router.post('/', optionalAuth, async (req, res) => {
+  try {
     const { title, slug, excerpt, content, coverImage, category, tags, published } = req.body;
 
     if (!title || !title.trim()) {
@@ -120,16 +155,16 @@ router.post('/', protect, async (req, res) => {
       finalSlug = `${finalSlug}-${Date.now()}`;
     }
 
-    const isPublished = Boolean(published);
+    const isPublished = published !== undefined ? Boolean(published) : true;
 
     const blog = await Blog.create({
       title: title.trim(),
       slug: finalSlug,
-      excerpt: excerpt ? excerpt.trim() : '',
+      excerpt: excerpt ? excerpt.trim() : content.trim().substring(0, 160),
       content: content.trim(),
       coverImage: coverImage ? coverImage.trim() : '',
       author: req.user._id,
-      category: category ? category.trim() : '',
+      category: category ? category.trim() : 'General',
       tags: Array.isArray(tags) ? tags : [],
       published: isPublished,
       publishedAt: isPublished ? new Date() : null

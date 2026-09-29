@@ -51,3 +51,36 @@ export const getBlogBySlug = async (slug) => {
 
   return data;
 };
+
+/**
+ * Create a new blog post (Public / Anyone)
+ * @param {string|null} token - Optional STEMSAGE JWT
+ * @param {Object} blogData - { title, content, excerpt, category, tags, published }
+ * @returns {Promise<Object>} API response data with created blog
+ */
+export const createBlog = async (token, blogData) => {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_URL}/api/blogs`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(blogData)
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    const error = new Error(data.message || 'Failed to create blog post.');
+    error.status = response.status;
+    error.data = data;
+    throw error;
+  }
+
+  return data;
+};

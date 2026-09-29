@@ -1,110 +1,115 @@
-import { useState, useEffect } from "react";
-import { Eye, MessageCircle, Pencil, Tag, UserRound, X, BookOpen, Calendar } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Eye, MessageCircle, Pencil, Tag, UserRound, X, BookOpen, Calendar, AlertCircle, CheckCircle2 } from "lucide-react";
 import Footer from "../components/common/Footer";
-import { getBlogs } from "../services/blogService";
+import { useAuth } from "../context/AuthContext";
+import { getBlogs, createBlog } from "../services/blogService";
 
 const filters = ["All", "Electronics", "Robotics", "Programming", "IoT", "3D Design"];
-const startingPosts = [
-  {
-    title: "Getting Started with Arduino",
-    authorName: "admin",
-    category: "Electronics",
-    content: "I'm new to Arduino and electronics. Where should I start? What components do I need for basic projects?...",
-    commentsCount: "2",
-    date: "Aug 03, 2026"
-  },
-  {
-    title: "Best Robotics Project Ideas",
-    authorName: "admin",
-    category: "Robotics",
-    content: "Share your favorite robotics project ideas! I'm looking for inspiration for my next project....",
-    commentsCount: "1",
-    date: "Aug 05, 2026"
-  },
-  {
-    title: "AI and Machine Learning in STEM",
-    authorName: "john_doe",
-    category: "Programming",
-    content: "How can we integrate AI and machine learning into STEM education? Share your thoughts and resources....",
-    commentsCount: "1",
-    date: "Aug 10, 2026"
-  },
-  {
-    title: "IoT Smart Home Projects",
-    authorName: "john_doe",
-    category: "IoT",
-    content: "I'm working on a smart home project. Any suggestions for sensors and automation ideas?...",
-    commentsCount: "1",
-    date: "Aug 12, 2026"
-  },
-  {
-    title: "3D Printing Tips",
-    authorName: "admin",
-    category: "3D Design",
-    content: "What are your best tips for successful 3D printing? Share your experiences with different materials and settings....",
-    commentsCount: "0",
-    date: "Aug 15, 2026"
-  }
-];
 
 function Forum() {
+  const { user, token, isAuthenticated } = useAuth();
   const [active, setActive] = useState("All");
   const [dbBlogs, setDbBlogs] = useState([]);
-  const [posts, setPosts] = useState(startingPosts);
+  const [loading, setLoading] = useState(true);
   const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState("");
+  const [formSuccess, setFormSuccess] = useState("");
   const [form, setForm] = useState({ title: "", description: "", author: "", category: "Electronics" });
 
-  useEffect(() => {
-    let isMounted = true;
-    const loadBlogs = async () => {
-      try {
-        const response = await getBlogs();
-        if (response.success && Array.isArray(response.data) && isMounted) {
-          if (response.data.length > 0) {
-            const formatted = response.data.map((b) => ({
-              id: b._id,
-              title: b.title,
-              slug: b.slug,
-              authorName: b.author?.name || "Admin",
-              category: b.category || "General",
-              content: b.excerpt || b.content,
-              commentsCount: "0",
-              date: b.publishedAt ? new Date(b.publishedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }) : "Recent",
-              isDbBlog: true
-            }));
-            setDbBlogs(formatted);
-          }
-        }
-      } catch (err) {
-        console.warn("Could not fetch backend blogs, using default forum items:", err.message);
+  const loadBlogs = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await getBlogs();
+      if (response.success && Array.isArray(response.data)) {
+        const formatted = response.data.map((b) => ({
+          id: b._id,
+          title: b.title,
+          slug: b.slug,
+          authorName: b.author?.name || "Admin",
+          category: b.category || "General",
+          content: b.excerpt || b.content,
+          commentsCount: "0",
+          date: b.publishedAt
+            ? new Date(b.publishedAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" })
+            : "Recent",
+          isDbBlog: true
+        }));
+        setDbBlogs(formatted);
       }
-    };
-    loadBlogs();
-    return () => { isMounted = false; };
+    } catch (err) {
+      console.warn("Could not fetch backend blogs from MongoDB:", err.message);
+      setDbBlogs([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const allDisplayPosts = dbBlogs.length > 0 ? [...dbBlogs, ...posts] : posts;
+  useEffect(() => {
+    loadBlogs();
+  }, [loadBlogs]);
 
-  const visiblePosts = allDisplayPosts.filter(
+  const visiblePosts = dbBlogs.filter(
     (post) => active === "All" || post.category.toLowerCase() === active.toLowerCase()
   );
 
   const updateField = (event) => setForm({ ...form, [event.target.name]: event.target.value });
 
-  const createPost = (event) => {
+  const handleOpenComposer = () => {
+    setFormError("");
+    setFormSuccess("");
+    setForm({
+      title: "",
+      description: "",
+      author: user?.name || "",
+      category: "Electronics"
+    });
+    setIsComposerOpen(true);
+  };
+
+  const createPost = async (event) => {
     event.preventDefault();
-    const newPost = {
-      title: form.title.trim(),
-      authorName: form.author.trim() || "Anonymous",
-      category: form.category,
-      content: form.description.trim(),
-      commentsCount: "0",
-      date: "Just now"
-    };
-    setPosts([newPost, ...posts]);
-    setForm({ title: "", description: "", author: "", category: "Electronics" });
-    setIsComposerOpen(false);
-    setActive("All");
+    setFormError("");
+    setFormSuccess("");
+
+    if (!form.title.trim()) {
+      setFormError("Title is required.");
+      return;
+    }
+
+    if (!form.description.trim()) {
+      setFormError("Description content is required.");
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const blogPayload = {
+        title: form.title.trim(),
+        content: form.description.trim(),
+        excerpt: form.description.trim().substring(0, 160),
+        category: form.category,
+        published: true
+      };
+
+      const response = await createBlog(token || null, blogPayload);
+
+      if (response.success && response.data?.blog) {
+        setFormSuccess("Blog post published successfully to MongoDB!");
+        setForm({ title: "", description: "", author: "", category: "Electronics" });
+        setIsComposerOpen(false);
+        setActive("All");
+        // Refetch blogs directly from MongoDB so newly created blog appears immediately & persists
+        await loadBlogs();
+      } else {
+        setFormError(response.message || "Failed to publish blog post.");
+      }
+    } catch (err) {
+      console.error("Create blog error:", err);
+      setFormError(err.message || "An error occurred while publishing the blog post.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -119,7 +124,7 @@ function Forum() {
           </h1>
           <div className="mx-auto mt-4 h-1 w-14 bg-red-600 rounded-full" />
           <p className="mt-6 text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
-            Connect, read articles from STEM experts, share projects, and learn with the STEMSAGE community.
+            Read published articles from STEM experts, share projects, and learn with the STEMSAGE community.
           </p>
         </div>
 
@@ -141,17 +146,22 @@ function Forum() {
           ))}
         </div>
 
-        {/* Blog & Forum Cards List */}
+        {/* Blog Cards List */}
         <div className="mt-8 space-y-5">
-          {visiblePosts.length === 0 ? (
+          {loading ? (
+            <div className="py-16 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-100">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-red-600 mb-3" />
+              <p className="text-sm font-medium">Fetching blog articles from MongoDB...</p>
+            </div>
+          ) : visiblePosts.length === 0 ? (
             <div className="py-12 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-100">
               <BookOpen className="mx-auto h-10 w-10 text-slate-300 mb-2" />
-              <p className="text-sm font-medium">No posts found for this category.</p>
+              <p className="text-sm font-medium">No published blog posts found for this category.</p>
             </div>
           ) : (
-            visiblePosts.map((post, idx) => (
+            visiblePosts.map((post) => (
               <article
-                key={post.id || `${post.title}-${idx}`}
+                key={post.id || post.slug}
                 className="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md hover:border-red-200"
               >
                 <div className="flex items-center justify-between gap-4 mb-2">
@@ -159,11 +169,9 @@ function Forum() {
                     <Tag size={12} />
                     {post.category}
                   </span>
-                  {post.isDbBlog && (
-                    <span className="text-[10px] font-extrabold uppercase tracking-wider bg-slate-900 text-white px-2 py-0.5 rounded">
-                      Official Article
-                    </span>
-                  )}
+                  <span className="text-[10px] font-extrabold uppercase tracking-wider bg-slate-900 text-white px-2 py-0.5 rounded">
+                    Official Article
+                  </span>
                 </div>
 
                 <h2 className="text-lg font-extrabold text-slate-900 group-hover:text-red-600 transition-colors">
@@ -203,12 +211,14 @@ function Forum() {
         {/* Create Post Button */}
         <button
           type="button"
-          onClick={() => setIsComposerOpen(true)}
+          onClick={handleOpenComposer}
           className="mt-8 flex w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50/50 py-6 text-center text-sm transition hover:bg-red-50/60 hover:border-red-300 cursor-pointer group"
         >
           <Pencil className="text-red-600 group-hover:scale-110 transition-transform" size={28} />
           <span className="mt-2 font-bold text-slate-800">Create a new post</span>
-          <span className="text-xs text-slate-500">Share your thoughts with the STEMSAGE community</span>
+          <span className="text-xs text-slate-500">
+            Share your thoughts and publish an article to the STEMSAGE community
+          </span>
         </button>
       </section>
 
@@ -239,11 +249,28 @@ function Forum() {
               <h2 id="create-post-title" className="mt-1 text-2xl font-extrabold text-slate-900">
                 Create a new post
               </h2>
-              <p className="mt-1 text-sm text-slate-500">Share a question, idea, or project with the STEMSAGE community.</p>
+              <p className="mt-1 text-sm text-slate-500">Publish a new article to the STEMSAGE blog repository.</p>
             </div>
+
+            {/* Error / Warning Alert */}
+            {formError && (
+              <div className="mb-4 rounded-xl bg-red-50 border border-red-200 p-3.5 flex items-center gap-2.5 text-red-700 text-xs font-medium">
+                <AlertCircle className="h-4 w-4 shrink-0 text-red-600" />
+                <span>{formError}</span>
+              </div>
+            )}
+
+            {/* Success Alert */}
+            {formSuccess && (
+              <div className="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 p-3.5 flex items-center gap-2.5 text-emerald-700 text-xs font-medium">
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-600" />
+                <span>{formSuccess}</span>
+              </div>
+            )}
+
             <form onSubmit={createPost} className="space-y-4">
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                Title
+                Title <span className="text-red-600">*</span>
                 <input
                   required
                   name="title"
@@ -254,7 +281,7 @@ function Forum() {
                 />
               </label>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                Description
+                Description / Content <span className="text-red-600">*</span>
                 <textarea
                   required
                   name="description"
@@ -267,14 +294,12 @@ function Forum() {
               </label>
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
-                  By whom
+                  Author Name
                   <input
-                    required
+                    disabled
                     name="author"
-                    value={form.author}
-                    onChange={updateField}
-                    placeholder="Your name"
-                    className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-normal outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-100"
+                    value={user?.name || "Community Member"}
+                    className="mt-2 w-full rounded-xl border border-slate-100 bg-slate-100 px-4 py-3 text-sm font-normal text-slate-500 outline-none cursor-not-allowed"
                   />
                 </label>
                 <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
@@ -295,15 +320,17 @@ function Forum() {
                 <button
                   type="button"
                   onClick={() => setIsComposerOpen(false)}
+                  disabled={isSubmitting}
                   className="rounded-xl border border-slate-200 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-600 transition hover:bg-slate-50 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="rounded-xl bg-red-600 px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-red-700 shadow-md cursor-pointer"
+                  disabled={isSubmitting}
+                  className="rounded-xl bg-red-600 px-6 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-red-700 shadow-md cursor-pointer flex items-center gap-2"
                 >
-                  Publish post
+                  {isSubmitting ? "Publishing..." : "Publish post"}
                 </button>
               </div>
             </form>
