@@ -15,9 +15,12 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 
+import { AuthProvider } from "./context/AuthContext";
+
 function App() {
   return (
-    <BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
 
       <Header />
 
@@ -38,6 +41,7 @@ function App() {
       </Routes>
 
     </BrowserRouter>
+  </AuthProvider>
   );
 }
 
