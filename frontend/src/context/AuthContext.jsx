@@ -31,6 +31,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('stemsage_user');
   };
 
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('stemsage_user', JSON.stringify(updatedUser));
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -39,6 +44,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: Boolean(token && user),
         login,
         logout,
+        updateUser,
       }}
     >
       {children}

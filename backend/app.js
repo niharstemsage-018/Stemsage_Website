@@ -5,6 +5,8 @@ require('dotenv').config();
 const transporter = require('./src/config/mailer');
 const contactRoutes = require('./src/routes/contact.routes');
 const authRoutes = require('./src/routes/auth.routes');
+const userRoutes = require('./src/routes/user.routes');
+const blogRoutes = require('./src/routes/blog.routes');
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.use(express.json());
 // Routes
 app.use('/api/contact', contactRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/blogs', blogRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

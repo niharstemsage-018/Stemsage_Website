@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown, Menu, X, CircleUser } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
 
 /* ─── Courses Mega Menu Data ─── */
 const coursesMegaMenuColumns = [
@@ -71,7 +72,6 @@ const navItems = [
     dropdown: [
       { label: "Blog", path: "/forum" },
       { label: "Gallery", path: "/learning" },
-      { label: "Projects", path: "/projects" },
       { label: "Student Projects", path: "/student-projects" },
     ],
   },
@@ -281,7 +281,7 @@ function HorizontalSubNav({ items, onClose }) {
         transform: "translateX(-50%)",
         paddingTop: "12px",
         zIndex: 100,
-        width: "620px",
+        width: "max-content",
         maxWidth: "calc(100vw - 32px)",
       }}
     >
@@ -291,7 +291,7 @@ function HorizontalSubNav({ items, onClose }) {
           border: "1px solid #e2e8f0",
           borderRadius: "16px",
           boxShadow: "0 20px 45px -10px rgba(0,0,0,0.12), 0 0 15px rgba(0,0,0,0.04)",
-          padding: "20px 24px",
+          padding: "16px 24px",
           position: "relative",
         }}
       >
@@ -310,7 +310,7 @@ function HorizontalSubNav({ items, onClose }) {
           }}
         />
 
-        <div className="grid grid-cols-4 gap-4 text-center items-center relative z-10">
+        <div className="flex items-center gap-6 text-center justify-center relative z-10">
           {items.map((item) => (
             <Link
               key={item.label}
@@ -472,6 +472,7 @@ function RightCartDrawer({ isOpen, onClose, cartItems = [], onRemove, onQtyChang
 
 /* ─── Main Header ─── */
 function Header() {
+  const { isAuthenticated, user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [comingSoonTitle, setComingSoonTitle] = useState(null);
@@ -677,12 +678,21 @@ function Header() {
             </button>
 
             <Link
-              to="/login"
+              to={isAuthenticated ? "/profile" : "/login"}
               className="flex items-center justify-center p-2 text-slate-700 hover:text-red-600 transition focus:outline-none rounded-lg hover:bg-slate-50 cursor-pointer"
-              title="Sign In"
-              aria-label="Sign In"
+              title={isAuthenticated ? `Profile (${user?.name || 'Account'})` : "Sign In"}
+              aria-label={isAuthenticated ? "User Profile" : "Sign In"}
             >
-              <CircleUser className="w-6 h-6 stroke-[1.5]" />
+              {isAuthenticated && user?.profilePicture ? (
+                <img
+                  src={user.profilePicture}
+                  alt={user.name}
+                  className="w-6 h-6 rounded-full object-cover border border-slate-300"
+                  onError={(e) => { e.currentTarget.style.display = "none"; }}
+                />
+              ) : (
+                <CircleUser className="w-6 h-6 stroke-[1.5]" />
+              )}
             </Link>
           </div>
 
@@ -840,12 +850,12 @@ function Header() {
 
             <div className="pt-6 border-t border-slate-100">
               <Link
-                to="/login"
+                to={isAuthenticated ? "/profile" : "/login"}
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-slate-300 bg-white text-sm font-bold uppercase tracking-wider text-slate-800 transition hover:bg-slate-50"
               >
                 <CircleUser className="w-5 h-5 stroke-[1.5]" />
-                <span>Sign In</span>
+                <span>{isAuthenticated ? "My Profile" : "Sign In"}</span>
               </Link>
             </div>
           </div>
