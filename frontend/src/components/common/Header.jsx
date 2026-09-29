@@ -330,7 +330,7 @@ function HorizontalSubNav({ items, onClose }) {
 /* ─── Cart Icon SVG Component ─── */
 const CartIcon = ({ className = "w-5 h-5 fill-current" }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" className={className}>
-    <path d="M24-16C10.7-16 0-5.3 0 8S10.7 32 24 32l45.3 0c3.9 0 7.2 2.8 7.9 6.6l52.1 286.3c6.2 34.2 36 59.1 70.8 59.1L456 384c13.3 0 24-10.7 24-24s-10.7-24-24-24l-255.9 0c-11.6 0-21.5-8.3-23.6-19.7l-5.1-28.3 303.6 0c30.8 0 57.2-21.9 62.9-52.2L568.9 69.9C572.6 50.2 557.5 32 537.4 32l-412.7 0-.4-2c-4.8-26.6-28-46-55.1-46L24-16zM208 512a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm224 0a48 48 0 1 0 0-96 48 48 0 1 0 0 96z"/>
+    <path d="M24-16C10.7-16 0-5.3 0 8S10.7 32 24 32l45.3 0c3.9 0 7.2 2.8 7.9 6.6l52.1 286.3c6.2 34.2 36 59.1 70.8 59.1L456 384c13.3 0 24-10.7 24-24s-10.7-24-24-24l-255.9 0c-11.6 0-21.5-8.3-23.6-19.7l-5.1-28.3 303.6 0c30.8 0 57.2-21.9 62.9-52.2L568.9 69.9C572.6 50.2 557.5 32 537.4 32l-412.7 0-.4-2c-4.8-26.6-28-46-55.1-46L24-16zM208 512a48 48 0 1 0 0-96 48 48 0 1 0 0 96zm224 0a48 48 0 1 0 0-96 48 48 0 1 0 0 96z" />
   </svg>
 );
 
@@ -590,11 +590,10 @@ function Header() {
                   >
                     <Link
                       to={item.path}
-                      className={`inline-flex items-center gap-1 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 ${
-                        active
+                      className={`inline-flex items-center gap-1 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 ${active
                           ? "font-bold text-red-600 underline decoration-red-500 decoration-2 underline-offset-4"
                           : "font-medium text-slate-600 hover:text-slate-900"
-                      }`}
+                        }`}
                     >
                       {item.label}
                       <ChevronDown
@@ -620,11 +619,10 @@ function Header() {
                   >
                     <Link
                       to={item.path}
-                      className={`inline-flex items-center gap-1 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 ${
-                        active
+                      className={`inline-flex items-center gap-1 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 ${active
                           ? "font-bold text-red-600 underline decoration-red-500 decoration-2 underline-offset-4"
                           : "font-medium text-slate-600 hover:text-slate-900"
-                      }`}
+                        }`}
                     >
                       {item.label}
                       <ChevronDown
@@ -649,11 +647,10 @@ function Header() {
                 <Link
                   key={item.label}
                   to={item.path}
-                  className={`inline-flex items-center gap-1 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 ${
-                    active
+                  className={`inline-flex items-center gap-1 text-sm transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 rounded px-1 ${active
                       ? "font-bold text-red-600 underline decoration-red-500 decoration-2 underline-offset-4"
                       : "font-medium text-slate-600 hover:text-slate-900"
-                  }`}
+                    }`}
                 >
                   {item.label}
                 </Link>
@@ -728,11 +725,10 @@ function Header() {
                   return (
                     <div key={item.label}>
                       <div
-                        className={`flex h-11 items-center justify-between rounded-lg px-3 cursor-pointer transition-colors ${
-                          active
+                        className={`flex h-11 items-center justify-between rounded-lg px-3 cursor-pointer transition-colors ${active
                             ? "border-l-4 border-red-500 bg-red-50/60 font-bold text-red-600 pl-4"
                             : "font-medium text-slate-700 hover:bg-slate-50"
-                        }`}
+                          }`}
                         onClick={() => setOpenDropdown(isOpen ? null : item.label)}
                       >
                         <span className="text-base">{item.label}</span>
@@ -777,11 +773,10 @@ function Header() {
                   return (
                     <div key={item.label}>
                       <div
-                        className={`flex h-11 items-center justify-between rounded-lg px-3 cursor-pointer transition-colors ${
-                          active
+                        className={`flex h-11 items-center justify-between rounded-lg px-3 cursor-pointer transition-colors ${active
                             ? "border-l-4 border-red-500 bg-red-50/60 font-bold text-red-600 pl-4"
                             : "font-medium text-slate-700 hover:bg-slate-50"
-                        }`}
+                          }`}
                         onClick={() => setOpenDropdown(isOpen ? null : item.label)}
                       >
                         <span className="text-base">{item.label}</span>
@@ -808,11 +803,10 @@ function Header() {
                                 key={child.label}
                                 to={child.path}
                                 onClick={() => setIsMobileMenuOpen(false)}
-                                className={`flex h-10 items-center gap-2 rounded-lg px-3 text-sm transition-colors ${
-                                  isActiveRoute(child.path)
+                                className={`flex h-10 items-center gap-2 rounded-lg px-3 text-sm transition-colors ${isActiveRoute(child.path)
                                     ? "font-bold text-red-600 bg-red-50/60"
                                     : "font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                                }`}
+                                  }`}
                               >
                                 <span>{child.icon}</span>
                                 <span>{child.label}</span>
@@ -831,11 +825,10 @@ function Header() {
                     key={item.label}
                     to={item.path}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className={`flex h-11 items-center justify-between rounded-lg px-3 text-base transition-colors ${
-                      active
+                    className={`flex h-11 items-center justify-between rounded-lg px-3 text-base transition-colors ${active
                         ? "border-l-4 border-red-500 bg-red-50/60 font-bold text-red-600 pl-4"
                         : "font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900"
-                    }`}
+                      }`}
                   >
                     <span>{item.label}</span>
                   </Link>

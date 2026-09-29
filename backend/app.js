@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const transporter = require('./src/config/mailer');
+
 const app = express();
 
 // Middleware
