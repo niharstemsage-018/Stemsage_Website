@@ -1,105 +1,8 @@
 import { useState } from "react";
 import Footer from "../components/common/Footer";
-import PageHero from "../components/mock/PageHero";
-import FilterBar from "../components/mock/FilterBar";
 import Modal from "../components/mock/Modal";
 import { studentProjects, studentProjectCategories } from "../data/studentProjects";
-
-const ICON_MAP = {
-  Robotics: "🤖", IoT: "📡", Electronics: "⚡",
-  Programming: "💻", "AI/ML": "🧠", "3D Design": "🖨️",
-};
-
-function StudentProjectCard({ project, onView }) {
-  return (
-    <div
-      style={{
-        background: "white",
-        borderRadius: "14px",
-        border: "1px solid #e2e8f0",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-        transition: "box-shadow 0.2s, transform 0.2s",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.12)";
-        e.currentTarget.style.transform = "translateY(-2px)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)";
-        e.currentTarget.style.transform = "translateY(0)";
-      }}
-    >
-      <div style={{ background: "linear-gradient(135deg, #0f172a, #1e293b)", height: "120px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "44px", position: "relative" }}>
-        {ICON_MAP[project.category] || "🔬"}
-        <span style={{ position: "absolute", top: "10px", right: "10px", fontSize: "10px", fontWeight: 700, background: "rgba(225,29,72,0.85)", color: "white", padding: "2px 8px", borderRadius: "6px", letterSpacing: "0.06em" }}>
-          {project.category}
-        </span>
-      </div>
-
-      <div style={{ padding: "18px", flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "linear-gradient(135deg, #e11d48, #0f172a)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: "13px", flexShrink: 0 }}>
-            {project.studentName.charAt(0)}
-          </div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: "12px", color: "#0f172a" }}>{project.studentName}</div>
-            <div style={{ fontSize: "10px", color: "#94a3b8" }}>{project.institution}</div>
-          </div>
-        </div>
-
-        <h3 style={{ margin: 0, fontSize: "15px", fontWeight: 800, color: "#0f172a", lineHeight: 1.25 }}>{project.title}</h3>
-        <p style={{ margin: 0, fontSize: "12px", color: "#64748b", lineHeight: 1.6 }}>{project.description}</p>
-
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "5px" }}>
-          {project.tags.map((t) => (
-            <span key={t} style={{ fontSize: "10px", color: "#475569", background: "#f1f5f9", padding: "2px 6px", borderRadius: "4px", border: "1px solid #e2e8f0" }}>{t}</span>
-          ))}
-        </div>
-
-        <button
-          onClick={() => onView(project)}
-          style={{ marginTop: "auto", padding: "9px", background: "#0f172a", color: "white", border: "none", borderRadius: "9999px", fontWeight: 700, fontSize: "11px", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer", transition: "background 0.15s" }}
-          onMouseEnter={(e) => (e.target.style.background = "#e11d48")}
-          onMouseLeave={(e) => (e.target.style.background = "#0f172a")}
-        >
-          View Project
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function ProjectDetailModal({ project, onClose }) {
-  if (!project) return null;
-  return (
-    <Modal isOpen={!!project} onClose={onClose} title={project.title}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "#f8fafc", borderRadius: "10px" }}>
-          <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "linear-gradient(135deg, #e11d48, #0f172a)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 800, fontSize: "16px" }}>
-            {project.studentName.charAt(0)}
-          </div>
-          <div>
-            <div style={{ fontWeight: 800, color: "#0f172a", fontSize: "14px" }}>{project.studentName}</div>
-            <div style={{ color: "#94a3b8", fontSize: "12px" }}>{project.institution}</div>
-          </div>
-          <span style={{ marginLeft: "auto", fontSize: "10px", fontWeight: 700, background: "#f1f5f9", color: "#475569", border: "1px solid #e2e8f0", padding: "3px 10px", borderRadius: "9999px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-            {project.category}
-          </span>
-        </div>
-        <p style={{ margin: 0, color: "#475569", fontSize: "14px", lineHeight: 1.7 }}>{project.description}</p>
-        <div>
-          <p style={{ margin: "0 0 8px", fontSize: "11px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.1em", color: "#475569" }}>Technologies Used</p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-            {project.tags.map((t) => <span key={t} style={{ fontSize: "11px", fontWeight: 600, background: "#0f172a", color: "white", padding: "3px 10px", borderRadius: "6px" }}>{t}</span>)}
-          </div>
-        </div>
-      </div>
-    </Modal>
-  );
-}
+import heroBgImg from "../assets/student_hero_bg.jpg";
 
 function SubmitModal({ isOpen, onClose }) {
   const [form, setForm] = useState({ name: "", title: "", institution: "", category: "", description: "" });
@@ -123,7 +26,7 @@ function SubmitModal({ isOpen, onClose }) {
           <div style={{ fontSize: "48px", marginBottom: "16px" }}>🎉</div>
           <h4 style={{ color: "#0f172a", fontWeight: 800, marginBottom: "8px" }}>Project Submitted!</h4>
           <p style={{ color: "#475569", fontSize: "14px", lineHeight: 1.7 }}>
-            Thanks for sharing your project! This is a demo — no data was actually saved.
+            Thanks for sharing your project! Your submission has been received.
           </p>
           <button
             onClick={handleClose}
@@ -178,7 +81,6 @@ function SubmitModal({ isOpen, onClose }) {
           >
             Submit Project
           </button>
-          <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", textAlign: "center" }}>Demo only — no data is submitted</p>
         </form>
       )}
     </Modal>
@@ -186,86 +88,96 @@ function SubmitModal({ isOpen, onClose }) {
 }
 
 function StudentProjects() {
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [selectedProject, setSelectedProject] = useState(null);
   const [submitOpen, setSubmitOpen] = useState(false);
 
-  const spotlight = studentProjects.find((p) => p.spotlight);
-  const filtered = studentProjects.filter(
-    (p) => activeCategory === "All" || p.category === activeCategory
-  );
-
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
-      <PageHero
-        label="STUDENT PROJECTS // SHOWCASE"
-        heading="Built by the"
-        headingAccent="Next Generation."
-        subtext="Explore ideas, experiments, and prototypes created by STEMSAGE students."
-      />
+    <div className="min-h-screen bg-white text-slate-800 flex flex-col justify-between font-sans">
+      {/* Top Banner Notice */}
+      <div className="bg-black text-white text-center py-2.5 px-4 text-xs font-medium tracking-wide">
+        Welcome to STEMSAGE (For the best experience, please view this site on a desktop)
+      </div>
 
-      {/* Student Spotlight */}
-      {spotlight && (
-        <section style={{ background: "#0f172a", padding: "60px 0" }}>
-          <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 24px" }}>
-            <p style={{ fontFamily: "monospace", fontSize: "10px", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: "#e11d48", marginBottom: "20px" }}>
-              Student Spotlight
+      <main className="flex-grow">
+        {/* Hero Section with Sand Dune Background & Overlapping White Box */}
+        <section
+          className="relative bg-cover bg-center py-16 sm:py-24 px-4 sm:px-6"
+          style={{ backgroundImage: `url(${heroBgImg})` }}
+        >
+          {/* Centered White Card Box */}
+          <div className="relative max-w-3xl mx-auto bg-white p-8 sm:p-14 shadow-sm text-center border border-slate-100/80">
+            <h1 className="text-4xl sm:text-5xl font-light tracking-tight text-slate-900 mb-6 font-sans">
+              Student Projects
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl mx-auto font-normal">
+              This is your Project Page. It's a great opportunity to help visitors understand the context and background of your latest work. Double click on the text box to start editing your content and make sure to add all the relevant details you want to share.
             </p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px", alignItems: "center" }}>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "20px" }}>
-                  <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "linear-gradient(135deg, #e11d48, #be123c)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontWeight: 900, fontSize: "20px" }}>
-                    {spotlight.studentName.charAt(0)}
-                  </div>
-                  <div>
-                    <div style={{ color: "white", fontWeight: 800, fontSize: "16px" }}>{spotlight.studentName}</div>
-                    <div style={{ color: "#94a3b8", fontSize: "12px" }}>{spotlight.institution}</div>
-                  </div>
-                </div>
-                <h2 style={{ margin: "0 0 16px", fontSize: "clamp(1.4rem, 3vw, 2rem)", fontWeight: 900, color: "white", lineHeight: 1.15, letterSpacing: "-0.02em" }}>{spotlight.title}</h2>
-                <p style={{ margin: "0 0 20px", color: "#94a3b8", fontSize: "14px", lineHeight: 1.7 }}>{spotlight.description}</p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginBottom: "24px" }}>
-                  {spotlight.tags.map((t) => <span key={t} style={{ fontSize: "11px", fontWeight: 600, background: "rgba(255,255,255,0.08)", color: "#94a3b8", border: "1px solid rgba(255,255,255,0.12)", padding: "3px 10px", borderRadius: "6px" }}>{t}</span>)}
-                </div>
-                <button
-                  onClick={() => setSelectedProject(spotlight)}
-                  style={{ padding: "12px 28px", background: "#e11d48", color: "white", border: "none", borderRadius: "9999px", fontWeight: 700, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
-                >
-                  View Project
-                </button>
-              </div>
-              <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "16px", height: "240px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "72px" }}>
-                {ICON_MAP[spotlight.category] || "🔬"}
-              </div>
-            </div>
           </div>
         </section>
-      )}
 
-      {/* All Projects */}
-      <section style={{ maxWidth: "1200px", margin: "0 auto", padding: "60px 24px" }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", alignItems: "center", justifyContent: "space-between", marginBottom: "32px" }}>
-          <h2 style={{ margin: 0, fontSize: "24px", fontWeight: 900, color: "#0f172a" }}>All Student Projects</h2>
-          <button
-            onClick={() => setSubmitOpen(true)}
-            style={{ padding: "11px 24px", background: "#e11d48", color: "white", border: "none", borderRadius: "9999px", fontWeight: 700, fontSize: "12px", letterSpacing: "0.08em", textTransform: "uppercase", cursor: "pointer" }}
-          >
-            + Submit Your Project
-          </button>
+        {/* Horizontal Line below Hero Card */}
+        <div className="max-w-4xl mx-auto px-6 mt-12 mb-16">
+          <hr className="border-t border-slate-700/60 w-full" />
         </div>
 
-        <FilterBar categories={studentProjectCategories} active={activeCategory} onChange={setActiveCategory} />
+        {/* Student Projects Alternating List */}
+        <section className="max-w-4xl mx-auto px-6 pb-20">
+          <div className="space-y-16 sm:space-y-20">
+            {studentProjects.map((project, idx) => {
+              const isImageLeft = idx % 2 === 0;
 
-        {filtered.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8" }}>No projects in this category.</div>
-        ) : (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "24px" }}>
-            {filtered.map((p) => <StudentProjectCard key={p.id} project={p} onView={setSelectedProject} />)}
+              return (
+                <div key={project.id || idx}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 items-center">
+                    {/* Image Column */}
+                    <div className={`overflow-hidden ${isImageLeft ? "md:order-1" : "md:order-2"}`}>
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        className="w-full h-64 sm:h-72 object-cover rounded-none"
+                      />
+                    </div>
+
+                    {/* Text Column */}
+                    <div className={`flex flex-col justify-center space-y-3 ${isImageLeft ? "md:order-2" : "md:order-1"}`}>
+                      <span className="text-2xl sm:text-3xl font-light text-slate-800 tracking-wider">
+                        {project.numStr}
+                      </span>
+                      <h2 className="text-2xl sm:text-3xl font-normal text-slate-900 tracking-tight">
+                        {project.title}
+                      </h2>
+                      {project.subtitle && (
+                        <p className="text-xs font-semibold text-red-600 tracking-wide">
+                          {project.subtitle} — {project.studentName}
+                        </p>
+                      )}
+                      <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+                        {project.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Red Divider Line between projects */}
+                  {idx < studentProjects.length - 1 && (
+                    <hr className="mt-16 sm:mt-20 border-t border-red-500/90 w-full" />
+                  )}
+                </div>
+              );
+            })}
           </div>
-        )}
-      </section>
 
-      <ProjectDetailModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+          {/* Submit Project Action Banner */}
+          <div className="mt-20 text-center pt-10 border-t border-slate-200">
+            <button
+              type="button"
+              onClick={() => setSubmitOpen(true)}
+              className="inline-flex items-center justify-center px-8 py-3 rounded-full bg-red-600 text-white font-bold text-xs uppercase tracking-wider transition hover:bg-red-700 shadow-sm cursor-pointer"
+            >
+              + Submit Your Project
+            </button>
+          </div>
+        </section>
+      </main>
+
       <SubmitModal isOpen={submitOpen} onClose={() => setSubmitOpen(false)} />
       <Footer />
     </div>
