@@ -3,6 +3,7 @@ const router = express.Router();
 const User = require('../models/User');
 const { verifyGoogleToken } = require('../services/googleAuth.service');
 const { generateToken } = require('../utils/jwt');
+const { protect } = require('../middleware/auth.middleware');
 
 /**
  * @route   POST /api/auth/google
@@ -123,6 +124,46 @@ router.post('/google', async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Server error during Google authentication.'
+    });
+  }
+});
+
+/**
+ * @route   GET /api/auth/me
+ * @desc    Get current authenticated user profile
+ * @access  Private
+ */
+router.get('/me', protect, async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          gender: user.gender || 'prefer_not_to_say',
+          phone: user.phone || '',
+          profilePicture: user.profilePicture || '',
+          role: user.role || 'user',
+          authProvider: user.authProvider || 'local',
+          isEmailVerified: user.isEmailVerified ?? true
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Fetch profile error:', error.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error fetching user profile.'
     });
   }
 });
