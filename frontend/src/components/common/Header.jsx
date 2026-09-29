@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X, CircleUser } from "lucide-react";
 
 /* ─── Courses Mega Menu Data ─── */
 const coursesMegaMenuColumns = [
@@ -677,10 +677,12 @@ function Header() {
             </button>
 
             <Link
-              to="/services"
-              className="inline-flex items-center justify-center rounded-md bg-red-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 shadow-sm"
+              to="/login"
+              className="flex items-center justify-center p-2 text-slate-700 hover:text-red-600 transition focus:outline-none rounded-lg hover:bg-slate-50 cursor-pointer"
+              title="Sign In"
+              aria-label="Sign In"
             >
-              GET STARTED
+              <CircleUser className="w-6 h-6 stroke-[1.5]" />
             </Link>
           </div>
 
@@ -838,11 +840,12 @@ function Header() {
 
             <div className="pt-6 border-t border-slate-100">
               <Link
-                to="/services"
+                to="/login"
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="flex h-11 w-full items-center justify-center rounded-md bg-red-600 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-red-700"
+                className="flex h-11 w-full items-center justify-center gap-2 rounded-md border border-slate-300 bg-white text-sm font-bold uppercase tracking-wider text-slate-800 transition hover:bg-slate-50"
               >
-                GET STARTED
+                <CircleUser className="w-5 h-5 stroke-[1.5]" />
+                <span>Sign In</span>
               </Link>
             </div>
           </div>
