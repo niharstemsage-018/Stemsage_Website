@@ -92,17 +92,61 @@ function ContactForm() {
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState(ERRORS_INIT);
   const [submitted, setSubmitted] = useState(false);
+  const [submittedEmail, setSubmittedEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const set = (key) => (e) => {
     setForm((f) => ({ ...f, [key]: e.target.value }));
     if (errors[key]) setErrors((er) => ({ ...er, [key]: undefined }));
+    if (apiError) setApiError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setApiError("");
+
     const errs = validate(form);
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-    setSubmitted(true);
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          phone: form.phone || "",
+          subject: form.subject,
+          message: form.message,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 201 && data.success) {
+        setSubmittedEmail(form.email);
+        setSubmitted(true);
+        setForm(INITIAL_FORM);
+        setErrors(ERRORS_INIT);
+      } else if (response.status === 400) {
+        setApiError(data.message || "Please check your inputs and try again.");
+      } else {
+        setApiError("Unable to send your message. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Network or submission error:", error);
+      setApiError("Unable to send your message. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (submitted) {
@@ -111,23 +155,26 @@ function ContactForm() {
         <div style={{ fontSize: "56px", marginBottom: "16px" }}>🎉</div>
         <h3 style={{ fontSize: "22px", fontWeight: 900, color: "#0f172a", marginBottom: "10px" }}>Message Sent!</h3>
         <p style={{ color: "#475569", fontSize: "14px", lineHeight: 1.75, maxWidth: "360px", margin: "0 auto 24px" }}>
-          Thank you for reaching out. The STEMSAGE team will get back to you at <strong>{form.email}</strong> within 24 hours.
+          Your message has been sent successfully. The STEMSAGE team will get back to you at <strong>{submittedEmail}</strong> within 24 hours.
         </p>
         <button
-          onClick={() => { setForm(INITIAL_FORM); setErrors(ERRORS_INIT); setSubmitted(false); }}
+          onClick={() => { setForm(INITIAL_FORM); setErrors(ERRORS_INIT); setSubmitted(false); setApiError(""); }}
           style={{ padding: "11px 28px", background: "#0f172a", color: "white", border: "none", borderRadius: "9999px", fontWeight: 700, fontSize: "12px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer" }}
         >
           Send Another
         </button>
-        <p style={{ marginTop: "12px", fontSize: "11px", color: "#94a3b8" }}>
-          This is a frontend demo — no email was actually sent.
-        </p>
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+      {apiError && (
+        <div style={{ padding: "10px 14px", borderRadius: "8px", background: "#fef2f2", border: "1px solid #fca5a5", color: "#b91c1c", fontSize: "13px", fontWeight: 600 }}>
+          {apiError}
+        </div>
+      )}
+
       {/* Name + Email */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
         <InputField label="Full Name *" id="name" error={errors.name}>
@@ -188,15 +235,30 @@ function ContactForm() {
 
       <button
         type="submit"
-        style={{ padding: "13px", background: "#e11d48", color: "white", border: "none", borderRadius: "9999px", fontWeight: 700, fontSize: "13px", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", transition: "background 0.15s" }}
-        onMouseEnter={(e) => (e.target.style.background = "#be123c")}
-        onMouseLeave={(e) => (e.target.style.background = "#e11d48")}
+        disabled={loading}
+        style={{
+          padding: "13px",
+          background: loading ? "#94a3b8" : "#e11d48",
+          color: "white",
+          border: "none",
+          borderRadius: "9999px",
+          fontWeight: 700,
+          fontSize: "13px",
+          letterSpacing: "0.1em",
+          textTransform: "uppercase",
+          cursor: loading ? "not-allowed" : "pointer",
+          transition: "background 0.15s",
+          opacity: loading ? 0.8 : 1,
+        }}
+        onMouseEnter={(e) => {
+          if (!loading) e.target.style.background = "#be123c";
+        }}
+        onMouseLeave={(e) => {
+          if (!loading) e.target.style.background = "#e11d48";
+        }}
       >
-        Send Message →
+        {loading ? "SENDING..." : "Send Message →"}
       </button>
-      <p style={{ margin: 0, fontSize: "11px", color: "#94a3b8", textAlign: "center" }}>
-        Demo only — no real email is sent. For direct contact use the email below.
-      </p>
     </form>
   );
 }

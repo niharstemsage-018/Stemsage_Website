@@ -3,12 +3,16 @@ const cors = require('cors');
 require('dotenv').config();
 
 const transporter = require('./src/config/mailer');
+const contactRoutes = require('./src/routes/contact.routes');
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Routes
+app.use('/api/contact', contactRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
