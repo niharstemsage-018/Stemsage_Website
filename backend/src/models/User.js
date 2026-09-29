@@ -26,13 +26,31 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: [true, 'Phone number is required'],
-      trim: true
+      required: false,
+      trim: true,
+      default: ''
     },
     password: {
       type: String,
-      required: [true, 'Password is required'],
+      required: false,
       minlength: [8, 'Password must be at least 8 characters']
+    },
+    authProvider: {
+      type: String,
+      enum: {
+        values: ['local', 'google'],
+        message: '{VALUE} is not a valid auth provider'
+      },
+      default: 'local'
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true
+    },
+    profilePicture: {
+      type: String,
+      default: ''
     },
     role: {
       type: String,
