@@ -238,7 +238,7 @@ function Home() {
                                 md:px-8
                             "
                         >
-                            Book a call
+                            Book a call now
                         </Link>
                     </div>
 
