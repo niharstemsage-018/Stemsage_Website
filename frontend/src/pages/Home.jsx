@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Footer from "../components/common/Footer";
 
 // Redesigned Homepage Sections below Hero
-import DoorsOfInnovation from "../components/home/DoorsOfInnovation";
+
 import WhatWeProvide from "../components/home/WhatWeProvide";
 import StemsageImpact from "../components/home/StemsageImpact";
 import BookDemoWorkshop from "../components/home/BookDemoWorkshop";
@@ -307,10 +307,6 @@ function Home() {
             </section>
 
 
-            {/* =========================================================
-                SECTION 1 — 5 DOORS OF INNOVATION
-            ========================================================== */}
-            <DoorsOfInnovation />
 
             {/* =========================================================
                 SECTION 2 — WHAT WE PROVIDE
