@@ -242,88 +242,70 @@ function Home() {
                         </Link>
                     </div>
 
-                    {/* =================================================
-                        SCROLL DOWN INDICATOR
-                    ================================================== */}
-                    <div
-                        style={{
-                            position: "absolute",
-                            bottom: "3%",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            zIndex: 20,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            gap: "4px",
-                        }}
-                    >
-                        <span
-                            style={{
-                                fontSize: "10px",
-                                fontWeight: "700",
-                                letterSpacing: "0.15em",
-                                color: "#0f172a",
-                                textShadow: "0 1px 4px rgba(255,255,255,0.6)",
-                                textTransform: "uppercase",
-                            }}
-                        >
-                            Scroll Down
-                        </span>
-                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "1px" }}>
-                            {[0, 1, 2].map((i) => (
-                                <svg
-                                    key={i}
-                                    width="16"
-                                    height="9"
-                                    viewBox="0 0 16 9"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    style={{
-                                        animation: "scrollBounce 1.4s ease-in-out infinite",
-                                        animationDelay: `${i * 0.18}s`,
-                                        opacity: 1 - i * 0.3,
-                                    }}
-                                >
-                                    <path
-                                        d="M1 1L8 8L15 1"
-                                        stroke="#0f172a"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                            ))}
-                        </div>
-                        <style>{`
-                            @keyframes scrollBounce {
-                                0%, 100% { transform: translateY(0); opacity: 0.9; }
-                                50% { transform: translateY(5px); opacity: 0.35; }
-                            }
-                        `}</style>
-                    </div>
-
-                    {/* =================================================
-                        BOTTOM FADE
-                    ================================================== */}
-                    <div
-                        className="
-                            pointer-events-none
-                            absolute
-                            inset-x-0
-                            bottom-0
-                            z-10
-                            h-20
-                            sm:h-24
-                            md:h-28
-                        "
-                        style={{
-                            background:
-                                "linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.35) 45%, rgba(255,255,255,0.85) 80%, #ffffff 100%)",
-                        }}
-                    />
                 </div>
+
+                {/* =================================================
+                    SCROLLING TICKER STRIP
+                ================================================== */}
+                <div
+                    style={{
+                        backgroundColor: "#dc2626",
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        padding: "11px 0",
+                        width: "100%",
+                    }}
+                >
+                    <style>{`
+                        @keyframes tickerScroll {
+                            0%   { transform: translateX(0); }
+                            100% { transform: translateX(-50%); }
+                        }
+                        .ticker-track {
+                            display: inline-flex;
+                            animation: tickerScroll 35s linear infinite;
+                            will-change: transform;
+                        }
+                        .ticker-track:hover {
+                            animation-play-state: paused;
+                        }
+                    `}</style>
+                    <div className="ticker-track">
+                        {[
+                            "Electronics", "Internet of Things", "Robotics", "3D Printing",
+                            "Drones", "Space Science", "STEM", "Workshops", "Bootcamps",
+                            "STEM Labs", "Robotics Lab", "Innovation Labs", "Design Thinking Lab",
+                            "Teacher Capacity Building Program", "Mobile Lab", "Programming",
+                            "Competitions", "Educational Kits", "Yearlong Curriculum", "21st Century Skills",
+                            // duplicate for seamless loop
+                            "Electronics", "Internet of Things", "Robotics", "3D Printing",
+                            "Drones", "Space Science", "STEM", "Workshops", "Bootcamps",
+                            "STEM Labs", "Robotics Lab", "Innovation Labs", "Design Thinking Lab",
+                            "Teacher Capacity Building Program", "Mobile Lab", "Programming",
+                            "Competitions", "Educational Kits", "Yearlong Curriculum", "21st Century Skills",
+                        ].map((item, idx) => (
+                            <span
+                                key={idx}
+                                style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    color: "#ffffff",
+                                    fontSize: "13px",
+                                    fontWeight: "700",
+                                    letterSpacing: "0.05em",
+                                    textTransform: "uppercase",
+                                    padding: "0 18px",
+                                }}
+                            >
+                                {item}
+                                <span style={{ marginLeft: "18px", color: "rgba(255,255,255,0.6)", fontSize: "10px" }}>●</span>
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
             </section>
+
 
             {/* =========================================================
                 SECTION 1 — 5 DOORS OF INNOVATION
