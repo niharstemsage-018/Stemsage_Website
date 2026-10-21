@@ -12,6 +12,7 @@ const servicesProvided = [
         description: "Structured, hands-on learning programs in STEM, Robotics, Physical AI, Innovation, Aviation, and emerging technologies, designed to develop practical skills throughout the academic year.",
         image: workshopImg,
         link: "/workshops",
+        buttonText: "Explore Programs"
     },
     {
         id: "02",
@@ -19,6 +20,7 @@ const servicesProvided = [
         description: "End-to-end lab setup solutions for schools and colleges, from STEM and Innovation Labs to advanced Engineering Labs, equipped with modern infrastructure, tools, and technology.",
         image: eduKitImg,
         link: "/store",
+        buttonText: "Explore Lab Solutions"
     },
     {
         id: "03",
@@ -26,6 +28,7 @@ const servicesProvided = [
         description: "Industry-aligned technical training in Embedded Systems, Industrial IoT, Autonomous Robotics, ROS, VLSI, Industrial Automation, Drone Technology, and Advanced Circuit Design.",
         image: "/images/hero-1.png",
         link: "/store",
+        buttonText: "Explore Training Programs"
     },
     {
         id: "04",
@@ -33,6 +36,7 @@ const servicesProvided = [
         description: "Professional development programs in STEM, AI, Robotics, IoT, Design Thinking, and innovative teaching methodologies.",
         image: "/images/hero-3.png",
         link: "/services",
+        buttonText: "Explore Programs"
     },
     {
         id: "05",
@@ -40,6 +44,7 @@ const servicesProvided = [
         description: "Self-learning platforms, tutorial videos, educational resources, and digital curriculums that support flexible, technology-driven learning.",
         image: "/images/hero-3.png",
         link: "/services",
+        buttonText: "Explore Platforms"
     },
 ];
 
@@ -90,7 +95,8 @@ export function ServiceCard({ item }) {
                         to={item.link}
                         className="inline-block rounded-lg bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm py-3 px-8 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] text-center"
                     >
-                        Read More
+                        {/* Read More */}
+                        {item.buttonText}
                     </Link>
                 </div>
             </div>
