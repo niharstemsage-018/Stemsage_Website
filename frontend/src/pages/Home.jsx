@@ -5,6 +5,7 @@ import Footer from "../components/common/Footer";
 // Redesigned Homepage Sections below Hero
 
 import WhatWeProvide from "../components/home/WhatWeProvide";
+import OurProducts from "../components/home/OurProducts";
 import StemsageImpact from "../components/home/StemsageImpact";
 import BookDemoWorkshop from "../components/home/BookDemoWorkshop";
 import StemTeachingJourney from "../components/home/StemTeachingJourney";
@@ -312,6 +313,11 @@ function Home() {
                 SECTION 2 — WHAT WE PROVIDE
             ========================================================== */}
             <WhatWeProvide />
+
+            {/* =========================================================
+                SECTION — OUR PRODUCTS
+            ========================================================== */}
+            <OurProducts />
 
             {/* =========================================================
                 SECTION 3 — STEMSAGE IMPACT / STATISTICS
