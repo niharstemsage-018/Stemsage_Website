@@ -316,7 +316,7 @@ function Home() {
             {/* =========================================================
                 SECTION 3 — STEMSAGE IMPACT / STATISTICS
             ========================================================== */}
-            <StemsageImpact />
+            {/* <StemsageImpact /> */}
 
             {/* =========================================================
                 SECTION 4 — BOOK A DEMO WORKSHOP NOW
