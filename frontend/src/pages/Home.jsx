@@ -11,6 +11,7 @@ import BookDemoWorkshop from "../components/home/BookDemoWorkshop";
 import StemTeachingJourney from "../components/home/StemTeachingJourney";
 import AssociationSocials from "../components/home/AssociationSocials";
 import TestimonialsSection from "../components/home/TestimonialsSection";
+import NewsHighlights from "../components/home/NewsHighlights";
 
 
 function Home() {
@@ -335,7 +336,12 @@ function Home() {
             <StemTeachingJourney />
 
             {/* =========================================================
-                SECTION 6 — ASSOCIATION / SOCIALS
+                SECTION 6 — NEWS & HIGHLIGHTS
+            ========================================================== */}
+            <NewsHighlights />
+
+            {/* =========================================================
+                SECTION 7 — ASSOCIATION / SOCIALS
             ========================================================== */}
             <AssociationSocials />
 
