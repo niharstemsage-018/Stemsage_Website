@@ -31,7 +31,7 @@ function BookDemoWorkshop() {
 
                         {/* Main Title */}
                         <h2 className="mt-2 text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                            Book a demo <span className="text-red-600">workshop</span> now
+                            Book a <span className="text-red-600">Demo</span> now
                         </h2>
 
                         {/* Red Line Accent */}
@@ -39,7 +39,7 @@ function BookDemoWorkshop() {
 
                         {/* Description Paragraph */}
                         <p className="mt-6 text-slate-600 text-sm sm:text-base font-medium leading-relaxed max-w-xl">
-                            Join us for an engaging demo workshop where you can experience our offerings firsthand!
+                            Join us for an engaging demo where you can experience our offerings firsthand!
                             Discover valuable insights and your questions answered by our experts.
                             Don't miss this opportunity to enhance your skills and knowledge. Book your spot today!
                         </p>
