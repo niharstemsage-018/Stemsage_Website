@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon, ArrowRight } from "lucide-react";
 
 import workshopImg from "../../assets/workshop-img.jpg";
 import eduKitImg from "../../assets/Edu-kit.webp";
@@ -72,19 +72,19 @@ function CardImage({ src, alt }) {
 
 export function ServiceCard({ item }) {
     return (
-        <div className="group flex flex-col sm:flex-row items-stretch rounded-[24px] bg-[#f2f3f5] border border-slate-200/90 p-5 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-slate-300">
-            {/* Left Image Area */}
-            <div className="w-full sm:w-[46%] h-52 sm:h-auto min-h-[190px] rounded-[18px] overflow-hidden bg-slate-200 shrink-0 relative">
+        <div className="group flex flex-col rounded-[24px] bg-[#f2f3f5] border border-slate-200/90 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl hover:border-slate-300 hover:-translate-y-1">
+            {/* Top Image Area */}
+            <div className="w-full h-48 overflow-hidden bg-slate-200 shrink-0 relative">
                 <CardImage src={item.image} alt={item.title} />
             </div>
 
-            {/* Right Text Area */}
-            <div className="flex-1 flex flex-col justify-between mt-5 sm:mt-0 sm:pl-6 text-left py-1">
+            {/* Bottom Text Area */}
+            <div className="flex-1 flex flex-col justify-between p-6 text-left">
                 <div>
-                    <h3 className="text-2xl sm:text-[26px] font-black text-slate-900 leading-tight">
+                    <h3 className="text-xl font-black text-slate-900 leading-tight">
                         {item.title}
                     </h3>
-                    <p className="mt-3 text-sm sm:text-base font-medium text-slate-600 leading-snug">
+                    <p className="mt-3 text-sm font-medium text-slate-600 leading-snug">
                         {item.description}
                     </p>
                 </div>
@@ -93,9 +93,8 @@ export function ServiceCard({ item }) {
                 <div className="mt-6">
                     <Link
                         to={item.link}
-                        className="inline-block rounded-lg bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm py-3 px-8 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] text-center"
+                        className="inline-block rounded-lg bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm py-2.5 px-6 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] text-center"
                     >
-                        {/* Read More */}
                         {item.buttonText}
                     </Link>
                 </div>
@@ -117,11 +116,22 @@ function WhatWeProvide() {
                     <div className="mt-4 mx-auto h-[3px] w-20 bg-red-600 rounded-full" />
                 </div>
 
-                {/* 2x2 Grid */}
-                <div className="mt-14 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
-                    {servicesProvided.map((service) => (
+                {/* 3-column Grid — first 3 only */}
+                <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {servicesProvided.slice(0, 3).map((service) => (
                         <ServiceCard key={service.id} item={service} />
                     ))}
+                </div>
+
+                {/* View All Services CTA */}
+                <div className="mt-12 flex justify-center">
+                    <Link
+                        to="/services"
+                        className="inline-flex items-center gap-3 rounded-full border-2 border-red-600 bg-white px-10 py-4 text-sm font-bold text-red-600 shadow-sm transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-600/20 hover:scale-105"
+                    >
+                        View All Services
+                        <ArrowRight className="h-4 w-4" />
+                    </Link>
                 </div>
             </div>
         </section>
