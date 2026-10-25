@@ -259,16 +259,16 @@ function TestimonialsSection() {
         [maxOffset]
     );
 
-    /* Auto-advance every 6 s */
+    /* Auto-advance every 5 s */
     useEffect(() => {
-        autoRef.current = setInterval(() => slide("right"), 6000);
+        autoRef.current = setInterval(() => slide("right"), 3000);
         return () => clearInterval(autoRef.current);
     }, [slide]);
 
     const pause = () => clearInterval(autoRef.current);
     const resume = () => {
         clearInterval(autoRef.current);
-        autoRef.current = setInterval(() => slide("right"), 6000);
+        autoRef.current = setInterval(() => slide("right"), 3000);
     };
 
     const visibleItems = testimonials.slice(offset, offset + cardsPerPage);
