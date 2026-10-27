@@ -12,6 +12,7 @@ import {
     FlaskConical,
     Wrench,
     GraduationCap,
+    Baby,
 } from "lucide-react";
 
 /* ============================================================
@@ -70,7 +71,32 @@ const products = [
         ctaLink: "/store",
         featured: true,
     },
-
+    {
+        id: "03",
+        badge: "Montessori Lab",
+        badgeColor: "bg-purple-100 text-purple-700",
+        accentColor: "#9333ea",
+        accentBg: "bg-purple-50",
+        accentRing: "ring-purple-200",
+        icon: Baby,
+        iconBg: "bg-purple-500",
+        title: "Smart Mont Lab",
+        subtitle: "Early Childhood STEM Learning",
+        features: [
+            "20+ Big Activity Sets",
+            "12 STEM Activities per Year for Each Grade",
+            "Nursery, LKG & UKG Curriculum",
+            "Child-Friendly Furniture & Learning Materials",
+        ],
+        price: "Enquire for Price",
+        priceType: "enquire",
+        tags: ["Montessori", "Early Education", "STEM", "Lab Setup"],
+        tagColor: "bg-purple-100 text-purple-700",
+        cta: "Enquire Now",
+        ctaType: "enquire",
+        ctaLink: "/contact",
+        featured: false,
+    },
     {
         id: "04",
         badge: "Maker Space",
@@ -160,7 +186,8 @@ const products = [
 /* ============================================================
    PRODUCT CARD
    ============================================================ */
-function ProductCard({ product, index }) {
+export { products };
+export function ProductCard({ product, index }) {
     const [hovered, setHovered] = useState(false);
     const Icon = product.icon;
 
