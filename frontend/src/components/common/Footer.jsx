@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { FaInstagram, FaFacebookF, FaWhatsapp, FaYoutube } from "react-icons/fa";
 import logoImg from "../../assets/StemSage_Footer_Logo.avif";
 import logoFallback from "/images/logo.png";
 
@@ -105,20 +106,59 @@ function Footer() {
                     </div>
                 </div>
 
-                {/* Bottom Bar (Copyright, Privacy policy, Terms and Conditions) */}
+                {/* Bottom Bar (Copyright, Privacy policy, Terms and Conditions, Social Links) */}
                 <div className="mt-20 pt-8 border-t border-slate-200/70 flex flex-col md:flex-row items-center justify-between gap-4 text-sm font-semibold text-slate-700">
-                    <div className="w-full md:w-1/3 text-left">
+                    <div className="w-full md:w-1/4 text-left">
                         © Copyright 2024 STEMSAGE TECHWORLD LLP
                     </div>
-                    <div className="w-full md:w-1/3 text-center">
+                    <div className="w-full md:w-1/4 text-center">
                         <Link to="/contact" className="hover:text-red-600 hover:underline">
                             Privacy policy
                         </Link>
                     </div>
-                    <div className="w-full md:w-1/3 text-right">
+                    <div className="w-full md:w-1/4 text-center">
                         <Link to="/contact" className="hover:text-red-600 hover:underline">
                             Terms and Conditions
                         </Link>
+                    </div>
+                    {/* Social Media Icons */}
+                    <div className="w-full md:w-1/4 flex items-center justify-end gap-2">
+                        <a
+                            href="https://www.instagram.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Instagram"
+                            className="flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 text-slate-600 transition-all duration-300 hover:bg-gradient-to-br hover:from-purple-500 hover:via-pink-500 hover:to-orange-400 hover:text-white hover:scale-110 hover:shadow-md"
+                        >
+                            <FaInstagram size={15} />
+                        </a>
+                        <a
+                            href="https://www.facebook.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Facebook"
+                            className="flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 text-slate-600 transition-all duration-300 hover:bg-[#1877F2] hover:text-white hover:scale-110 hover:shadow-md"
+                        >
+                            <FaFacebookF size={15} />
+                        </a>
+                        <a
+                            href="https://wa.me/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="WhatsApp"
+                            className="flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 text-slate-600 transition-all duration-300 hover:bg-[#25D366] hover:text-white hover:scale-110 hover:shadow-md"
+                        >
+                            <FaWhatsapp size={15} />
+                        </a>
+                        <a
+                            href="https://www.youtube.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="YouTube"
+                            className="flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 text-slate-600 transition-all duration-300 hover:bg-[#FF0000] hover:text-white hover:scale-110 hover:shadow-md"
+                        >
+                            <FaYoutube size={15} />
+                        </a>
                     </div>
                 </div>
             </div>

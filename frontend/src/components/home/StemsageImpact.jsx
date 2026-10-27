@@ -1,152 +1,188 @@
 import React from "react";
+import impactPhoto from "../../assets/stemsage_impact.jpg";
 
-// Custom SVG Illustration 1 — Onsite Workshops
-const OnsiteIllustration = () => (
-    <svg viewBox="0 0 400 300" className="w-full h-full max-h-56 object-contain" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Monitor Frame */}
-        <rect x="90" y="40" width="220" height="150" rx="12" stroke="#0f172a" strokeWidth="4" fill="#ffffff" />
-        <path d="M140 190L120 230H280L260 190" stroke="#0f172a" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-        <line x1="100" y1="230" x2="300" y2="230" stroke="#0f172a" strokeWidth="4" strokeLinecap="round" />
-
-        {/* Code inside monitor */}
-        <rect x="110" y="60" width="180" height="24" rx="4" fill="#f1f5f9" />
-        <path d="M125 72L135 67M125 72L135 77M145 66L140 78M150 72L160 67M150 72L160 77" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        <line x1="175" y1="72" x2="270" y2="72" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" strokeDasharray="6 6" />
-
-        <line x1="110" y1="100" x2="250" y2="100" stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
-        <line x1="110" y1="115" x2="210" y2="115" stroke="#06b6d4" strokeWidth="3" strokeLinecap="round" />
-        <line x1="110" y1="130" x2="270" y2="130" stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
-        <line x1="110" y1="145" x2="180" y2="145" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" />
-
-        {/* Person Sitting Left */}
-        <circle cx="95" cy="155" r="16" stroke="#0f172a" strokeWidth="4" fill="#ffffff" />
-        <path d="M70 210C70 185 85 180 95 180C105 180 120 185 120 210" stroke="#0f172a" strokeWidth="4" fill="none" />
-        <path d="M100 190L135 200" stroke="#0f172a" strokeWidth="4" strokeLinecap="round" />
-
-        {/* Person Standing Right */}
-        <circle cx="310" cy="115" r="16" stroke="#0f172a" strokeWidth="4" fill="#ffffff" />
-        <path d="M290 195V150C290 140 300 135 310 135C320 135 330 140 330 150V195" stroke="#0f172a" strokeWidth="4" fill="none" />
-        <path d="M295 145L260 140" stroke="#0f172a" strokeWidth="4" strokeLinecap="round" />
-
-        {/* Floating Sparkles/Dots */}
-        <circle cx="70" cy="90" r="3" fill="#06b6d4" />
-        <circle cx="330" cy="70" r="4" fill="#ef4444" />
-        <path d="M60 110L66 116M66 110L60 116" stroke="#64748b" strokeWidth="2" />
+// Icons for each stat card
+const SchoolIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.8}>
+        <path d="M3 21h18M9 21V10.5M15 21V10.5M3 10.5l9-7.5 9 7.5" strokeLinecap="round" strokeLinejoin="round" />
+        <rect x="9" y="14" width="6" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
 
-// Custom SVG Illustration 2 — Online Workshops
-const OnlineIllustration = () => (
-    <svg viewBox="0 0 400 300" className="w-full h-full max-h-56 object-contain" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Gear background */}
-        <circle cx="310" cy="75" r="22" stroke="#cbd5e1" strokeWidth="3" strokeDasharray="6 6" fill="none" />
-        <circle cx="210" cy="55" r="14" stroke="#cbd5e1" strokeWidth="3" strokeDasharray="4 4" fill="none" />
-
-        {/* Big Laptop Screen */}
-        <rect x="80" y="80" width="240" height="140" rx="10" stroke="#0f172a" strokeWidth="4" fill="#1e293b" />
-        <rect x="90" y="90" width="220" height="120" rx="6" fill="#ffffff" />
-        <path d="M50 220H350L330 232H70L50 220Z" stroke="#0f172a" strokeWidth="4" fill="#e2e8f0" />
-
-        {/* Screen Content */}
-        <rect x="100" y="102" width="90" height="50" rx="4" fill="#f8fafc" stroke="#06b6d4" strokeWidth="2" />
-        <path d="M110 127L120 118M110 127L120 136M130 115L125 138M135 127L145 118M135 127L145 136" stroke="#06b6d4" strokeWidth="2" strokeLinecap="round" />
-
-        <rect x="200" y="102" width="95" height="50" rx="4" fill="#fef2f2" stroke="#ef4444" strokeWidth="2" />
-        <line x1="210" y1="115" x2="280" y2="115" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" />
-        <line x1="210" y1="127" x2="260" y2="127" stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
-        <line x1="210" y1="139" x2="275" y2="139" stroke="#94a3b8" strokeWidth="3" strokeLinecap="round" />
-
-        {/* Person Left coding */}
-        <circle cx="115" cy="155" r="14" fill="#f97316" />
-        <path d="M95 205C95 185 105 175 115 175C125 175 135 185 135 205" fill="#0f172a" />
-        <path d="M125 180L160 165" stroke="#f97316" strokeWidth="4" strokeLinecap="round" />
-
-        {/* Person Right waving */}
-        <circle cx="285" cy="130" r="14" fill="#38bdf8" />
-        <path d="M265 180C265 160 275 150 285 150C295 150 305 160 305 180" fill="#0f172a" />
-
-        {/* Plant on right */}
-        <path d="M325 195Q315 170 330 160Q345 170 335 195Z" fill="#10b981" />
-        <rect x="323" y="195" width="14" height="18" fill="#f97316" rx="2" />
+const StudentsIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.8}>
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="9" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
 
-// Custom SVG Illustration 3 — Developed 50+ Projects
-const ProjectsIllustration = () => (
-    <svg viewBox="0 0 400 300" className="w-full h-full max-h-56 object-contain" fill="none" xmlns="http://www.w3.org/2000/svg">
-        {/* Background gear circle glow */}
-        <circle cx="200" cy="140" r="75" fill="#eff6ff" />
-        <circle cx="200" cy="140" r="65" stroke="#3b82f6" strokeWidth="4" strokeDasharray="12 8" fill="none" />
-        <circle cx="145" cy="170" r="40" stroke="#6366f1" strokeWidth="3" strokeDasharray="8 6" fill="none" />
-
-        {/* Main Big Gear */}
-        <circle cx="200" cy="140" r="30" stroke="#1d4ed8" strokeWidth="8" fill="none" />
-
-        {/* Person Climbing Ladder Left */}
-        <path d="M260 230L290 120" stroke="#0f172a" strokeWidth="4" strokeLinecap="round" />
-        <path d="M275 230L305 120" stroke="#0f172a" strokeWidth="4" strokeLinecap="round" />
-        <line x1="267" y1="200" x2="282" y2="200" stroke="#0f172a" strokeWidth="3" />
-        <line x1="273" y1="175" x2="288" y2="175" stroke="#0f172a" strokeWidth="3" />
-        <line x1="279" y1="150" x2="294" y2="150" stroke="#0f172a" strokeWidth="3" />
-        <line x1="285" y1="125" x2="300" y2="125" stroke="#0f172a" strokeWidth="3" />
-
-        <circle cx="280" cy="95" r="14" fill="#ec4899" />
-        <path d="M265 145C265 125 275 115 280 115C285 115 295 125 295 145" fill="#1e1b4b" />
-
-        {/* Person Pushing Gear Bottom Left */}
-        <circle cx="115" cy="180" r="14" fill="#ef4444" />
-        <path d="M95 230C95 205 105 198 115 198C125 198 135 205 135 230" fill="#0f172a" />
-        <path d="M125 205L160 185" stroke="#ef4444" strokeWidth="4" strokeLinecap="round" />
+const TeachersIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.8}>
+        <rect x="2" y="3" width="20" height="14" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8 21h8M12 17v4" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M7 9h2M11 9h6M7 12h4M15 12h2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
+
+const WorkshopIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.8}>
+        <rect x="3" y="4" width="18" height="16" rx="2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M3 9h18M9 4v5M15 4v5" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M7 14h4M7 17h6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
+const CitiesIcon = () => (
+    <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" stroke="currentColor" strokeWidth={1.8}>
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" strokeLinecap="round" strokeLinejoin="round" />
+        <circle cx="12" cy="9" r="2.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+);
+
 
 const impactStats = [
     {
-        id: "stat-1",
-        illustration: OnsiteIllustration,
-        titleLine1: "Conducted over 20+",
-        titleLine2: "onsite workshops",
+        id: "schools",
+        icon: SchoolIcon,
+        stat: "20+",
+        label: "Schools Empowered",
+        desc: "STEM Labs, Workshops and Yearlong Programs",
+        color: "text-red-600",
+        bg: "bg-red-50",
+        border: "border-red-100",
     },
     {
-        id: "stat-2",
-        illustration: OnlineIllustration,
-        titleLine1: "Conducted 10+ online",
-        titleLine2: "workshops",
+        id: "students",
+        icon: StudentsIcon,
+        stat: "50,000+",
+        label: "Students Trained",
+        desc: "From Grade 3 to Engineering Students",
+        color: "text-red-600",
+        bg: "bg-red-50",
+        border: "border-red-100",
     },
     {
-        id: "stat-3",
-        illustration: ProjectsIllustration,
-        titleLine1: "Developed over 50+",
-        titleLine2: "projects",
+        id: "teachers",
+        icon: TeachersIcon,
+        stat: "200+",
+        label: "Teachers Trained",
+        desc: "STEM and Technology Capacity Building Programs",
+        color: "text-slate-700",
+        bg: "bg-slate-50",
+        border: "border-slate-100",
+    },
+    {
+        id: "workshops",
+        icon: WorkshopIcon,
+        stat: "30+",
+        label: "Workshops Conducted",
+        desc: "Bootcamps at Schools, Colleges and Institutions",
+        color: "text-slate-700",
+        bg: "bg-slate-50",
+        border: "border-slate-100",
+    },
+    {
+        id: "cities",
+        icon: CitiesIcon,
+        stat: "10+",
+        label: "Cities Covered",
+        desc: "Growing presence across the nation",
+        color: "text-red-600",
+        bg: "bg-red-50",
+        border: "border-red-100",
     },
 ];
 
 function StemsageImpact() {
     return (
-        <section className="relative overflow-hidden bg-white py-16 sm:py-24 px-5 border-b border-slate-100">
-            <div className="relative mx-auto max-w-6xl">
-                {/* 3 Impact Columns Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-8 items-start text-center">
-                    {impactStats.map((item) => {
-                        const IllustrationComponent = item.illustration;
-                        return (
-                            <div
-                                key={item.id}
-                                className="group flex flex-col items-center justify-start p-2 transition-all duration-300 hover:-translate-y-1.5"
-                            >
-                                {/* Vector Graphic Container */}
-                                <div className="h-44 sm:h-52 w-full flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                                    <IllustrationComponent />
-                                </div>
+        <section className="relative overflow-hidden bg-white py-16 sm:py-24 border-b border-slate-100">
+            {/* Subtle background accent blobs */}
+            <div className="absolute top-0 left-0 w-72 h-72 bg-red-50 rounded-full -translate-x-1/2 -translate-y-1/2 opacity-60 pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-slate-50 rounded-full translate-x-1/3 translate-y-1/3 opacity-70 pointer-events-none" />
 
-                                {/* Typography Label */}
-                                <h3 className="mt-6 text-2xl sm:text-3xl font-extrabold text-slate-800 leading-tight max-w-[280px]">
-                                    <span className="block">{item.titleLine1}</span>
-                                    <span className="block">{item.titleLine2}</span>
-                                </h3>
-                            </div>
-                        );
-                    })}
+            <div className="relative mx-auto max-w-7xl px-6 lg:px-10">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+                    {/* ── LEFT COLUMN ── */}
+                    <div className="flex flex-col gap-8">
+                        {/* Eyebrow */}
+                        <div className="flex items-center gap-2">
+                            <span className="block w-7 h-[2px] bg-red-600" />
+                            <span className="text-xs font-bold uppercase tracking-widest text-red-600">
+                                Our Impact
+                            </span>
+                        </div>
+
+                        {/* Heading */}
+                        <div className="-mt-4">
+                            <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight">
+                                A Growing Network of<br />
+                                <span className="text-red-600">Ideas, Innovation</span>
+                                <br />&amp; Impact Across the Nation
+                            </h2>
+                            <p className="mt-5 text-base sm:text-lg text-slate-500 leading-relaxed max-w-lg">
+                                Through hands-on learning, innovative labs, workshops and training programs,
+                                we are empowering students and educators across schools and colleges to build,
+                                innovate and be future ready.
+                            </p>
+                        </div>
+
+                        {/* Stats Grid — 2 columns */}
+                        <div className="grid grid-cols-2 gap-4">
+                            {impactStats.map((item) => {
+                                const IconComponent = item.icon;
+                                return (
+                                    <div
+                                        key={item.id}
+                                        className={`group flex flex-col gap-2 p-4 rounded-2xl border ${item.bg} ${item.border} transition-all duration-300 hover:-translate-y-1 hover:shadow-md`}
+                                    >
+                                        {/* Icon */}
+                                        <span className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${item.bg} border ${item.border} ${item.color} mb-1`}>
+                                            <IconComponent />
+                                        </span>
+                                        {/* Stat number */}
+                                        <span className={`text-2xl sm:text-3xl font-extrabold ${item.color} leading-none`}>
+                                            {item.stat}
+                                        </span>
+                                        {/* Label */}
+                                        <span className="text-sm font-bold text-slate-800 leading-snug">
+                                            {item.label}
+                                        </span>
+                                        {/* Description */}
+                                        <span className="text-xs text-slate-500 leading-relaxed">
+                                            {item.desc}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    {/* ── RIGHT COLUMN — Image ── */}
+                    <div className="relative flex items-center justify-center">
+                        {/* Decorative dot grid */}
+                        <div className="absolute top-4 right-4 grid grid-cols-5 gap-1.5 opacity-30 pointer-events-none">
+                            {Array.from({ length: 25 }).map((_, i) => (
+                                <span key={i} className="block w-1.5 h-1.5 rounded-full bg-red-400" />
+                            ))}
+                        </div>
+
+                        {/* Red blob accent */}
+                        <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-red-600 rounded-3xl opacity-10 pointer-events-none" />
+
+                        {/* Photo */}
+                        <div className="relative w-full max-w-xl rounded-3xl overflow-hidden shadow-2xl border-4 border-white ring-1 ring-slate-200">
+                            <img
+                                src={impactPhoto}
+                                alt="Students and teachers engaged in STEM hands-on learning"
+                                className="w-full h-auto object-cover"
+                            />
+                            {/* Bottom overlay gradient */}
+                            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-slate-900/30 to-transparent" />
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </section>
@@ -154,3 +190,4 @@ function StemsageImpact() {
 }
 
 export default StemsageImpact;
+
