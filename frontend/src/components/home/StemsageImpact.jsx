@@ -128,31 +128,31 @@ function StemsageImpact() {
                             </p>
                         </div>
 
-                        {/* Stats Grid — 2 columns */}
-                        <div className="grid grid-cols-2 gap-4">
+                        {/* Stats Grid — 3 columns, 2 rows */}
+                        <div className="grid grid-cols-3 gap-3">
                             {impactStats.map((item) => {
                                 const IconComponent = item.icon;
                                 return (
                                     <div
                                         key={item.id}
-                                        className={`group flex flex-col gap-2 p-4 rounded-2xl border ${item.bg} ${item.border} transition-all duration-300 hover:-translate-y-1 hover:shadow-md`}
+                                        className={`group flex flex-row items-start gap-3 p-3 rounded-2xl border ${item.bg} ${item.border} transition-all duration-300 hover:-translate-y-1 hover:shadow-md`}
                                     >
-                                        {/* Icon */}
-                                        <span className={`inline-flex items-center justify-center w-10 h-10 rounded-xl ${item.bg} border ${item.border} ${item.color} mb-1`}>
+                                        {/* Icon — left side */}
+                                        <span className={`inline-flex items-center justify-center shrink-0 w-9 h-9 rounded-xl ${item.bg} border ${item.border} ${item.color} mt-0.5`}>
                                             <IconComponent />
                                         </span>
-                                        {/* Stat number */}
-                                        <span className={`text-2xl sm:text-3xl font-extrabold ${item.color} leading-none`}>
-                                            {item.stat}
-                                        </span>
-                                        {/* Label */}
-                                        <span className="text-sm font-bold text-slate-800 leading-snug">
-                                            {item.label}
-                                        </span>
-                                        {/* Description */}
-                                        <span className="text-xs text-slate-500 leading-relaxed">
-                                            {item.desc}
-                                        </span>
+                                        {/* Text — right side */}
+                                        <div className="flex flex-col gap-0.5 min-w-0">
+                                            <span className={`text-xl font-extrabold ${item.color} leading-none`}>
+                                                {item.stat}
+                                            </span>
+                                            <span className="text-xs font-bold text-slate-800 leading-snug">
+                                                {item.label}
+                                            </span>
+                                            <span className="text-[11px] text-slate-400 leading-relaxed">
+                                                {item.desc}
+                                            </span>
+                                        </div>
                                     </div>
                                 );
                             })}
@@ -160,7 +160,7 @@ function StemsageImpact() {
                     </div>
 
                     {/* ── RIGHT COLUMN — Image ── */}
-                    <div className="relative flex items-center justify-center">
+                    <div className="relative flex items-start justify-center">
                         {/* Decorative dot grid */}
                         <div className="absolute top-4 right-4 grid grid-cols-5 gap-1.5 opacity-30 pointer-events-none">
                             {Array.from({ length: 25 }).map((_, i) => (
