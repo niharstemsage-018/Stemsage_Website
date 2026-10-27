@@ -64,7 +64,7 @@ const navItems = [
     isMegaMenu: true,
   },
   { label: "Services", path: "/services" },
-  { label: "Our Store", path: "/store" },
+  { label: "Products", path: "/store" },
   {
     label: "Our Forum",
     path: "/forum",
