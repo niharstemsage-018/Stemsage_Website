@@ -61,8 +61,8 @@ export const learningPaths = [
     icon: "🔬",
     description: "Learn by designing, building, testing, and improving real projects that solve real problems.",
     cta: "Explore Projects",
-    href: "/projects",
-    disabled: false,
+    href: "#",
+    disabled: true,
   },
   {
     id: 4,

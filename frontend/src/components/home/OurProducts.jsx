@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import {
     CheckCircle2,
@@ -22,12 +22,7 @@ const products = [
     {
         id: "01",
         badge: "STEM Kit",
-        badgeColor: "bg-emerald-100 text-emerald-700",
-        accentColor: "#10b981",
-        accentBg: "bg-emerald-50",
-        accentRing: "ring-emerald-200",
         icon: FlaskConical,
-        iconBg: "bg-emerald-500",
         title: "My STEM Box",
         subtitle: "Hands-On Science & Discovery",
         features: [
@@ -39,7 +34,6 @@ const products = [
         price: "2,999",
         priceType: "fixed",
         tags: ["STEM", "Science", "Physics", "Chemistry", "Biology", "Math"],
-        tagColor: "bg-emerald-100 text-emerald-700",
         cta: "Buy Now",
         ctaType: "buy",
         ctaLink: "/store",
@@ -48,12 +42,7 @@ const products = [
     {
         id: "02",
         badge: "Innovation Kit",
-        badgeColor: "bg-blue-100 text-blue-700",
-        accentColor: "#3b82f6",
-        accentBg: "bg-blue-50",
-        accentRing: "ring-blue-200",
         icon: Cpu,
-        iconBg: "bg-blue-500",
         title: "My Innovation Box",
         subtitle: "Build, Code & Create",
         features: [
@@ -65,7 +54,6 @@ const products = [
         price: "4,999",
         priceType: "fixed",
         tags: ["Robotics", "IoT", "Electronics", "Arduino", "Programming"],
-        tagColor: "bg-blue-100 text-blue-700",
         cta: "Buy Now",
         ctaType: "buy",
         ctaLink: "/store",
@@ -74,12 +62,7 @@ const products = [
     {
         id: "03",
         badge: "Montessori Lab",
-        badgeColor: "bg-purple-100 text-purple-700",
-        accentColor: "#9333ea",
-        accentBg: "bg-purple-50",
-        accentRing: "ring-purple-200",
         icon: Baby,
-        iconBg: "bg-purple-500",
         title: "Smart Mont Lab",
         subtitle: "Early Childhood STEM Learning",
         features: [
@@ -91,7 +74,6 @@ const products = [
         price: "Enquire for Price",
         priceType: "enquire",
         tags: ["Montessori", "Early Education", "STEM", "Lab Setup"],
-        tagColor: "bg-purple-100 text-purple-700",
         cta: "Enquire Now",
         ctaType: "enquire",
         ctaLink: "/contact",
@@ -100,12 +82,7 @@ const products = [
     {
         id: "04",
         badge: "Maker Space",
-        badgeColor: "bg-orange-100 text-orange-700",
-        accentColor: "#f97316",
-        accentBg: "bg-orange-50",
-        accentRing: "ring-orange-200",
         icon: Wrench,
-        iconBg: "bg-orange-500",
         title: "STEMSAGE Smart Maker Space",
         subtitle: "Innovation Hub for Schools & Colleges",
         features: [
@@ -118,7 +95,6 @@ const products = [
         price: "Enquire for Price",
         priceType: "enquire",
         tags: ["Schools", "Innovation", "Robotics & AI", "Lab Setup", "Engineering"],
-        tagColor: "bg-orange-100 text-orange-700",
         cta: "Enquire Now",
         ctaType: "enquire",
         ctaLink: "/contact",
@@ -127,12 +103,7 @@ const products = [
     {
         id: "05",
         badge: "Curriculum",
-        badgeColor: "bg-red-100 text-red-700",
-        accentColor: "#e11d48",
-        accentBg: "bg-red-50",
-        accentRing: "ring-red-200",
         icon: GraduationCap,
-        iconBg: "bg-red-600",
         title: "Yearlong Robotics & Physical AI Curriculum",
         subtitle: "School-Wide Experiential Learning Program",
         features: [
@@ -146,7 +117,6 @@ const products = [
         price: "Enquire for Price",
         priceType: "enquire",
         tags: ["Robotics", "Physical AI", "STEM Education", "School Curriculum", "Experiential Learning"],
-        tagColor: "bg-red-100 text-red-700",
         cta: "Enquire Now",
         ctaType: "enquire",
         ctaLink: "/contact",
@@ -155,12 +125,7 @@ const products = [
     {
         id: "06",
         badge: "Master Class",
-        badgeColor: "bg-cyan-100 text-cyan-700",
-        accentColor: "#06b6d4",
-        accentBg: "bg-cyan-50",
-        accentRing: "ring-cyan-200",
         icon: Zap,
-        iconBg: "bg-cyan-500",
         title: "STEMSAGE Arduino Master Class",
         subtitle: "From Circuits to Code — On Campus",
         features: [
@@ -175,7 +140,6 @@ const products = [
         price: "Enquire for Price",
         priceType: "enquire",
         tags: ["Arduino", "Robotics", "Electronics", "Embedded Systems", "Coding", "Automation"],
-        tagColor: "bg-cyan-100 text-cyan-700",
         cta: "Enquire Now",
         ctaType: "enquire",
         ctaLink: "/contact",
@@ -187,81 +151,71 @@ const products = [
    PRODUCT CARD
    ============================================================ */
 export { products };
-export function ProductCard({ product, index }) {
-    const [hovered, setHovered] = useState(false);
+export function ProductCard({ product }) {
     const Icon = product.icon;
 
     return (
         <div
             className={`
-                group relative flex flex-col rounded-3xl border bg-white
-                transition-all duration-500 hover:shadow-2xl hover:-translate-y-1
+                group relative flex flex-col rounded-xl bg-white border transition-all duration-300
+                hover:shadow-lg hover:-translate-y-0.5
                 ${product.featured
-                    ? "border-slate-300 shadow-lg ring-2 ring-offset-2"
-                    : "border-slate-200/80 shadow-sm"
+                    ? "border-red-200 shadow-sm ring-2 ring-red-500 ring-offset-1"
+                    : "border-slate-200 shadow-sm hover:border-red-200"
                 }
-                ${product.featured ? product.accentRing : ""}
             `}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
         >
             {/* Featured Ribbon */}
             {product.featured && (
-                <div
-                    className="absolute -top-3.5 left-6 z-10 flex items-center gap-1.5 rounded-full px-4 py-1 text-[11px] font-bold uppercase tracking-widest text-white shadow-md"
-                    style={{ backgroundColor: product.accentColor }}
-                >
-                    <Star className="h-3 w-3 fill-white" />
+                <div className="absolute -top-3 left-4 z-10 flex items-center gap-1 rounded-full bg-red-600 px-3 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white shadow shadow-red-600/30">
+                    <Star className="h-2.5 w-2.5 fill-white" />
                     Most Popular
                 </div>
             )}
 
-            {/* Card Header */}
-            <div className={`relative overflow-hidden rounded-t-3xl ${product.accentBg} p-6 pb-5`}>
-                {/* Decorative circles */}
-                <div
-                    className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-20"
-                    style={{ backgroundColor: product.accentColor }}
-                />
-                <div
-                    className="pointer-events-none absolute -right-2 -bottom-6 h-20 w-20 rounded-full opacity-10"
-                    style={{ backgroundColor: product.accentColor }}
-                />
-
-                <div className="relative flex items-start justify-between gap-3">
-                    {/* Icon */}
-                    <div
-                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-md transition-transform duration-300 group-hover:scale-110 ${product.iconBg}`}
-                    >
-                        <Icon className="h-6 w-6" />
+            {/* Image Placeholder */}
+            <div className={`relative overflow-hidden rounded-t-xl h-40 flex items-center justify-center ${product.featured ? "bg-red-50" : "bg-slate-100"}`}>
+                <div className="pointer-events-none absolute -right-4 -top-4 h-20 w-20 rounded-full bg-red-600/8" />
+                <div className="flex flex-col items-center gap-2 opacity-40">
+                    <div className="h-10 w-10 rounded-lg bg-slate-300 flex items-center justify-center">
+                        <svg className="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                     </div>
-
-                    {/* Badge */}
-                    <span className={`rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider ${product.badgeColor}`}>
-                        {product.badge}
-                    </span>
+                    <span className="text-[10px] font-medium text-slate-400">Product Image</span>
                 </div>
+                {/* Badge top-right */}
+                <span className="absolute top-2 right-2 rounded-full bg-white border border-slate-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-600 shadow-sm">
+                    {product.badge}
+                </span>
+            </div>
 
-                <div className="mt-4">
-                    <h3 className="text-xl font-extrabold leading-tight text-slate-900 sm:text-2xl">
+            {/* Card Header */}
+            <div className={`flex items-center gap-3 px-5 pt-4 pb-2.5 ${product.featured ? "bg-white" : "bg-white"}`}>
+                {/* Icon */}
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-600 text-white shadow shadow-red-600/25 transition-transform duration-300 group-hover:scale-110">
+                    <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                    <h3 className="text-base font-extrabold leading-tight text-slate-900">
                         {product.title}
                     </h3>
-                    <p className="mt-1 text-sm font-medium text-slate-500">
+                    <p className="text-xs font-medium text-slate-500 leading-tight">
                         {product.subtitle}
                     </p>
                 </div>
             </div>
 
+            {/* Divider */}
+            <div className="mx-4 h-px bg-slate-100" />
+
             {/* Card Body */}
-            <div className="flex flex-1 flex-col p-6">
+            <div className="flex flex-1 flex-col px-5 pt-4 pb-5">
                 {/* Features */}
-                <ul className="space-y-2.5">
+                <ul className="space-y-1.5">
                     {product.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2.5">
-                            <CheckCircle2
-                                className="mt-0.5 h-4 w-4 shrink-0"
-                                style={{ color: product.accentColor }}
-                            />
+                        <li key={i} className="flex items-start gap-2">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
                             <span className="text-sm font-medium text-slate-700 leading-snug">
                                 {feature}
                             </span>
@@ -270,13 +224,13 @@ export function ProductCard({ product, index }) {
                 </ul>
 
                 {/* Tags */}
-                <div className="mt-5 flex flex-wrap gap-2">
+                <div className="mt-3 flex flex-wrap gap-1">
                     {product.tags.map((tag, i) => (
                         <span
                             key={i}
-                            className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${product.tagColor}`}
+                            className="inline-flex items-center gap-0.5 rounded-full bg-slate-100 px-2.5 py-0.5 text-[11px] font-semibold text-slate-600"
                         >
-                            <Tag className="h-2.5 w-2.5" />
+                            <Tag className="h-2.5 w-2.5 text-red-500" />
                             {tag}
                         </span>
                     ))}
@@ -286,30 +240,27 @@ export function ProductCard({ product, index }) {
                 <div className="flex-1" />
 
                 {/* Divider */}
-                <div className="my-5 h-px w-full bg-slate-100" />
+                <div className="my-3 h-px w-full bg-slate-100" />
 
                 {/* Price & CTA */}
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center justify-between gap-3">
                     {/* Price */}
                     <div>
                         {product.priceType === "fixed" ? (
                             <>
-                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                     Price
                                 </p>
-                                <p
-                                    className="mt-0.5 text-2xl font-black tracking-tight"
-                                    style={{ color: product.accentColor }}
-                                >
+                                <p className="mt-0.5 text-xl font-black tracking-tight text-red-600">
                                     &#8377;{product.price}
                                 </p>
                             </>
                         ) : (
                             <>
-                                <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                                     Pricing
                                 </p>
-                                <p className="mt-0.5 text-base font-bold italic text-slate-500">
+                                <p className="mt-0.5 text-sm font-bold text-slate-500">
                                     {product.price}
                                 </p>
                             </>
@@ -319,13 +270,7 @@ export function ProductCard({ product, index }) {
                     {/* CTA Button */}
                     <Link
                         to={product.ctaLink}
-                        className="inline-flex shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold text-white shadow-md transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                        style={{
-                            backgroundColor: product.accentColor,
-                            boxShadow: hovered
-                                ? `0 8px 24px ${product.accentColor}55`
-                                : `0 4px 12px ${product.accentColor}33`,
-                        }}
+                        className="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-bold text-white shadow shadow-red-600/20 transition-all duration-300 hover:bg-red-700 hover:scale-105 hover:shadow-md hover:shadow-red-600/30"
                     >
                         {product.ctaType === "buy" ? (
                             <ShoppingCart className="h-4 w-4" />
@@ -345,36 +290,23 @@ export function ProductCard({ product, index }) {
    ============================================================ */
 function OurProducts() {
     return (
-        <section className="relative overflow-hidden bg-slate-50 py-16 sm:py-24 px-5 sm:px-8 border-b border-slate-100">
-            {/* Ambient background blobs */}
-            <div className="pointer-events-none absolute left-0 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-400/10 blur-3xl" />
-            <div className="pointer-events-none absolute right-0 bottom-0 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-blue-400/10 blur-3xl" />
+        <section className="relative overflow-hidden bg-white py-16 sm:py-24 px-5 sm:px-8 border-b border-slate-100">
+            {/* Subtle background accent */}
+            <div className="pointer-events-none absolute left-0 top-0 h-80 w-80 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-50 blur-3xl" />
+            <div className="pointer-events-none absolute right-0 bottom-0 h-80 w-80 translate-x-1/2 translate-y-1/2 rounded-full bg-slate-100 blur-3xl" />
 
             <div className="relative mx-auto max-w-7xl">
                 {/* Section Header */}
                 <div className="text-center">
-                    <div className="mb-4 flex items-center justify-center gap-3">
-                        <span className="h-[2px] w-8 bg-red-600 sm:w-12" />
-                        <span className="text-[11px] font-bold uppercase tracking-[0.3em] text-red-600 sm:text-xs">
-                            Our Products
-                        </span>
-                        <span className="h-[2px] w-8 bg-red-600 sm:w-12" />
-                    </div>
 
-                    <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl md:text-6xl leading-tight">
+                    <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl leading-tight">
                         Explore Our{" "}
                         <span className="text-red-600">Product Range</span>
                     </h2>
-                    <p className="mx-auto mt-5 max-w-2xl text-base sm:text-lg text-slate-500 leading-relaxed">
-                        From hands-on kits for young learners to full-scale innovation labs for schools — discover
-                        STEMSAGE products built to inspire the next generation of innovators.
-                    </p>
-
-                    <div className="mt-6 mx-auto h-[3px] w-16 rounded-full bg-red-600" />
                 </div>
 
-                {/* Product Grid — show only first 3 on home page */}
-                <div className="mt-14 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+                {/* Product Grid */}
+                <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {products.slice(0, 3).map((product, index) => (
                         <ProductCard key={product.id} product={product} index={index} />
                     ))}
@@ -396,3 +328,4 @@ function OurProducts() {
 }
 
 export default OurProducts;
+

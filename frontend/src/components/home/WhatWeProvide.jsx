@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Image as ImageIcon, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import workshopImg from "../../assets/workshop-img.jpg";
 import eduKitImg from "../../assets/Edu-kit.webp";
@@ -53,9 +53,13 @@ function CardImage({ src, alt }) {
 
     if (hasError || !src) {
         return (
-            <div className="flex flex-col items-center justify-center h-full w-full bg-slate-200 text-slate-400 p-4 text-center">
-                <ImageIcon className="h-10 w-10 mb-2 opacity-60" />
-                <span className="text-xs font-semibold">Image Placeholder</span>
+            <div className="flex flex-col items-center justify-center h-full w-full bg-slate-100 text-slate-400 gap-2 opacity-40">
+                <div className="h-10 w-10 rounded-lg bg-slate-300 flex items-center justify-center">
+                    <svg className="h-5 w-5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <span className="text-[10px] font-medium text-slate-400">Service Image</span>
             </div>
         );
     }
@@ -72,28 +76,31 @@ function CardImage({ src, alt }) {
 
 export function ServiceCard({ item }) {
     return (
-        <div className="group flex flex-col rounded-[24px] bg-[#f2f3f5] border border-slate-200/90 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl hover:border-slate-300 hover:-translate-y-1">
+        <div className="group flex flex-col rounded-xl bg-white border border-slate-200 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-lg hover:border-red-200 hover:-translate-y-0.5">
             {/* Top Image Area */}
-            <div className="w-full h-48 overflow-hidden bg-slate-200 shrink-0 relative">
+            <div className="w-full h-40 overflow-hidden bg-slate-100 shrink-0 relative">
                 <CardImage src={item.image} alt={item.title} />
             </div>
 
+            {/* Divider */}
+            <div className="h-px bg-slate-100" />
+
             {/* Bottom Text Area */}
-            <div className="flex-1 flex flex-col justify-between p-6 text-left">
+            <div className="flex-1 flex flex-col justify-between px-5 pt-4 pb-5 text-left">
                 <div>
-                    <h3 className="text-xl font-black text-slate-900 leading-tight">
+                    <h3 className="text-base font-extrabold text-slate-900 leading-tight">
                         {item.title}
                     </h3>
-                    <p className="mt-3 text-sm font-medium text-slate-600 leading-snug">
+                    <p className="mt-2 text-sm font-medium text-slate-600 leading-snug">
                         {item.description}
                     </p>
                 </div>
 
                 {/* Button */}
-                <div className="mt-6">
+                <div className="mt-5">
                     <Link
                         to={item.link}
-                        className="inline-block rounded-lg bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm py-2.5 px-6 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] text-center"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm py-2.5 px-4 transition-all duration-300 shadow hover:shadow-md hover:scale-[1.02]"
                     >
                         {item.buttonText}
                     </Link>

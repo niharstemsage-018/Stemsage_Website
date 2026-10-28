@@ -106,13 +106,6 @@ function StemsageImpact() {
 
                     {/* ── LEFT COLUMN ── */}
                     <div className="flex flex-col gap-8">
-                        {/* Eyebrow */}
-                        <div className="flex items-center gap-2">
-                            <span className="block w-7 h-[2px] bg-red-600" />
-                            <span className="text-xs font-bold uppercase tracking-widest text-red-600">
-                                Our Impact
-                            </span>
-                        </div>
 
                         {/* Heading */}
                         <div className="-mt-4">
@@ -121,11 +114,6 @@ function StemsageImpact() {
                                 <span className="text-red-600">Ideas, Innovation</span>
                                 <br />&amp; Impact Across the Nation
                             </h2>
-                            <p className="mt-5 text-base sm:text-lg text-slate-500 leading-relaxed max-w-lg">
-                                Through hands-on learning, innovative labs, workshops and training programs,
-                                we are empowering students and educators across schools and colleges to build,
-                                innovate and be future ready.
-                            </p>
                         </div>
 
                         {/* Stats Grid — 3 columns, 2 rows */}

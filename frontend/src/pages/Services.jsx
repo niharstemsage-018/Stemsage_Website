@@ -1,46 +1,61 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import Footer from "../components/common/Footer";
+import { ServiceCard } from "../components/home/WhatWeProvide";
 
 // Imported Assets
 import bannerBg from "../assets/Edu-kit.webp";
 import workshopImg from "../assets/workshop-img.jpg";
 import eduKitsImg from "../assets/services/Educational_kits.png";
-import coursesImg from "../assets/services/Courses.png";
 import labSetupImg from "../assets/services/Lab_Setup.png";
 
 const serviceList = [
     {
-        id: "educational-kits",
-        title: "Educational kits",
-        image: eduKitsImg,
-        text: "Get excited about our amazing kits in Electronics, Robotics, and Drones that spark creativity for future engineers! Each kit includes all components, user manuals, and step-by-step project guides.",
-        link: "/store",
-        btnText: "Explore Kits",
-    },
-    {
-        id: "courses",
-        title: "Courses",
-        image: coursesImg,
-        text: "Structured hands-on courses designed to teach students foundational to advanced concepts in Electronics, Robotics, IoT, 3D Printing, and Software Programming.",
-        link: "/courses",
-        btnText: "View Courses",
-    },
-    {
-        id: "stem-workshops",
-        title: "STEM Workshops",
+        id: "01",
+        title: "Curriculums and Workshops",
+        description: "Structured, hands-on learning programs in STEM, Robotics, Physical AI, Innovation, Aviation, and emerging technologies, designed to develop practical skills throughout the academic year.",
         image: workshopImg,
-        text: "Interactive, expert-led workshops for schools, colleges, and institutions. Students build real working prototypes and gain practical engineering skills.",
         link: "/workshops",
-        btnText: "Book Workshop",
+        buttonText: "Explore Programs",
     },
     {
-        id: "stem-lab-setup",
-        title: "STEM Lab Setup",
+        id: "02",
+        title: "Smart Lab Setup",
+        description: "End-to-end lab setup solutions for schools and colleges, from STEM and Innovation Labs to advanced Engineering Labs, equipped with modern infrastructure, tools, and technology.",
         image: labSetupImg,
-        text: "Complete end-to-end setup for school and college STEM/Innovation labs — including hardware tools, 3D printers, workstations, curriculum, and instructor training.",
         link: "/contact",
-        btnText: "Consult Us",
+        buttonText: "Explore Lab Solutions",
+    },
+    {
+        id: "03",
+        title: "Smart Educational Kits",
+        description: "Innovative, hands-on educational kits that make STEM concepts, electronics, robotics, and emerging technologies engaging, interactive, and accessible to learners.",
+        image: eduKitsImg,
+        link: "/store",
+        buttonText: "Explore Kits",
+    },
+    {
+        id: "04",
+        title: "Industrial Training Programs",
+        description: "Industry-aligned technical training in Embedded Systems, Industrial IoT, Autonomous Robotics, ROS, VLSI, Industrial Automation, Drone Technology, and Advanced Circuit Design.",
+        image: null,
+        link: "/contact",
+        buttonText: "Explore Training Programs",
+    },
+    {
+        id: "05",
+        title: "Teacher Capacity Building",
+        description: "Professional development programs in STEM, AI, Robotics, IoT, Design Thinking, and innovative teaching methodologies.",
+        image: null,
+        link: "/contact",
+        buttonText: "Explore Programs",
+    },
+    {
+        id: "06",
+        title: "Digital Learning Ecosystem",
+        description: "Self-learning platforms, tutorial videos, educational resources, and digital curriculums that support flexible, technology-driven learning.",
+        image: null,
+        link: "/contact",
+        buttonText: "Explore Platforms",
     },
 ];
 
@@ -57,7 +72,7 @@ function Services() {
                 <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
             </div>
 
-            {/* ─── Floating White Intro Box (Matching Reference Screenshot) ─── */}
+            {/* ─── Floating White Intro Box ─── */}
             <div className="relative z-10 mx-auto -mt-28 sm:-mt-36 md:-mt-48 max-w-4xl px-4 sm:px-6">
                 <div className="bg-white border border-slate-200/90 shadow-xl px-6 py-10 sm:px-12 sm:py-14 md:px-16 text-center">
                     <h1 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-slate-900 mb-6">
@@ -68,52 +83,16 @@ function Services() {
                         such as electronics, robotics, programming, and the Internet of Things (IoT). Our team is
                         dedicated to delivering innovative solutions that cater to the evolving needs of our clients.
                         Whether it's through hands-on workshops, consulting, or project development, we aim to
-                        empower individuals and organizations to thrive in these dynamic sectors. Partner with us
-                        to explore new possibilities and elevate your expertise in the world of STEM.
+                        empower individuals and organizations to thrive in these dynamic sectors.
                     </p>
                 </div>
             </div>
 
-            {/* ─── Service Cards Grid (Matching Reference Screenshot Bordered Cards) ─── */}
+            {/* ─── Service Cards Grid ─── */}
             <section className="mx-auto max-w-6xl px-5 sm:px-8 pt-16 sm:pt-24 pb-24">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {serviceList.map((service) => (
-                        <article
-                            key={service.id}
-                            className="bg-white border border-slate-300 overflow-hidden shadow-xs transition-all duration-300 hover:shadow-lg flex flex-col"
-                        >
-                            {/* Card Title Box at Top */}
-                            <div className="border-b border-slate-200 bg-slate-50/40 py-5 px-6 text-center">
-                                <h2 className="text-2xl sm:text-3xl font-medium text-slate-900">
-                                    {service.title}
-                                </h2>
-                            </div>
-
-                            {/* Card Image */}
-                            <div className="h-64 sm:h-72 w-full overflow-hidden bg-slate-100 border-b border-slate-200">
-                                <img
-                                    src={service.image}
-                                    alt={service.title}
-                                    className="h-full w-full object-cover object-center transition-transform duration-500 hover:scale-105"
-                                />
-                            </div>
-
-                            {/* Card Description & CTA */}
-                            <div className="p-6 sm:p-8 flex flex-col flex-grow text-center justify-between">
-                                <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-6 font-normal">
-                                    {service.text}
-                                </p>
-
-                                <div>
-                                    <Link
-                                        to={service.link}
-                                        className="inline-flex items-center justify-center rounded-full bg-red-600 px-7 py-3 text-xs sm:text-sm font-bold text-white shadow-md transition-all duration-300 hover:bg-red-700 hover:scale-105"
-                                    >
-                                        {service.btnText}
-                                    </Link>
-                                </div>
-                            </div>
-                        </article>
+                        <ServiceCard key={service.id} item={service} />
                     ))}
                 </div>
             </section>
@@ -125,3 +104,4 @@ function Services() {
 }
 
 export default Services;
+
