@@ -69,16 +69,8 @@ function Footer() {
                             Resources
                         </h3>
                         <ul className="space-y-4 text-base font-semibold text-slate-700">
-                            <li>
-                                <Link to="/projects" className="hover:text-red-600 underline-offset-4 hover:underline">
-                                    Our projects
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/student-projects" className="hover:text-red-600 underline-offset-4 hover:underline">
-                                    Student projects
-                                </Link>
-                            </li>
+
+
                             <li>
                                 <Link to="/workshops" className="hover:text-red-600 underline-offset-4 hover:underline">
                                     Workshops

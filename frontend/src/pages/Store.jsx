@@ -39,7 +39,7 @@ function Store() {
         <div className="pointer-events-none absolute right-0 bottom-0 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-blue-400/10 blur-3xl" />
 
         <div className="relative mx-auto max-w-7xl">
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
             {products.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}

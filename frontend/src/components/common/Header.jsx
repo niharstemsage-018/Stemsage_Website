@@ -72,7 +72,7 @@ const navItems = [
     dropdown: [
       { label: "Blog", path: "/forum" },
       { label: "Gallery", path: "/learning" },
-      { label: "Student Projects", path: "/student-projects" },
+
     ],
   },
   { label: "Contact", path: "/contact" },
