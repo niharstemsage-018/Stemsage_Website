@@ -10,6 +10,18 @@ const authRoutes = require('./src/routes/auth.routes');
 const userRoutes = require('./src/routes/user.routes');
 const blogRoutes = require('./src/routes/blog.routes');
 
+// New content routes
+const Product = require('./src/models/Product');
+const Service = require('./src/models/Service');
+const Course = require('./src/models/Course');
+const Workshop = require('./src/models/Workshop');
+const Testimonial = require('./src/models/Testimonial');
+const NewsItem = require('./src/models/NewsItem');
+const GalleryImage = require('./src/models/GalleryImage');
+const AssociationLogo = require('./src/models/AssociationLogo');
+const InnovationDoor = require('./src/models/InnovationDoor');
+const { createCrudRoutes } = require('./src/utils/routes/crudRoutes');
+
 const app = express();
 
 app.set('trust proxy', 1);
@@ -57,6 +69,25 @@ app.use('/api/contact', contactRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/blogs', blogRoutes);
+
+// Content routes (public + admin)
+const models = [
+  { name: 'products', model: Product, opts: { imageField: 'images', slugField: 'slug' } },
+  { name: 'services', model: Service },
+  { name: 'courses', model: Course },
+  { name: 'workshops', model: Workshop },
+  { name: 'testimonials', model: Testimonial },
+  { name: 'news', model: NewsItem },
+  { name: 'gallery', model: GalleryImage },
+  { name: 'associations', model: AssociationLogo },
+  { name: 'innovations', model: InnovationDoor }
+];
+
+models.forEach(({ name, model, opts }) => {
+  const { publicRouter, adminRouter } = createCrudRoutes(model, opts);
+  app.use(`/api/${name}`, publicRouter);
+  app.use(`/api/admin/${name}`, adminRouter);
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
