@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { verifyToken } = require('../utils/jwt');
 
@@ -50,6 +51,35 @@ const protect = async (req, res, next) => {
   }
 };
 
+/**
+ * Middleware to require admin role.
+ */
+const requireAdmin = async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Not authorized, no user found'
+      });
+    }
+
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access forbidden: Admin privileges required'
+      });
+    }
+
+    next();
+  } catch (error) {
+    return res.status(403).json({
+      success: false,
+      message: 'Access forbidden'
+    });
+  }
+};
+
 module.exports = {
-  protect
+  protect,
+  requireAdmin
 };

@@ -1,9 +1,88 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { verifyGoogleToken } = require('../services/googleAuth.service');
 const { generateToken } = require('../utils/jwt');
 const { protect } = require('../middleware/auth.middleware');
+
+/**
+ * @route   POST /api/auth/admin/login
+ * @desc    Admin login with email and password
+ * @access  Public
+ */
+router.post('/admin/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Email and password are required'
+      });
+    }
+
+    const user = await User.findOne({ email, authProvider: 'local' }).select('+password');
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        message: 'This account is inactive'
+      });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      });
+    }
+
+    if (user.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: Admin privileges required'
+      });
+    }
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = generateToken({
+      userId: user._id,
+      role: user.role
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Admin login successful',
+      data: {
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role
+        }
+      }
+    });
+  } catch (error) {
+    console.error('Admin login error:', error.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during admin login'
+    });
+  }
+});
 
 /**
  * @route   POST /api/auth/google
