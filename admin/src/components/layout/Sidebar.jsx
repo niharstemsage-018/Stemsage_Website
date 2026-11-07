@@ -30,9 +30,9 @@ const navItems = [
   { path: '/messages', label: 'Messages', icon: Mail },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }) {
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 min-h-screen">
+    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 min-h-screen lg:sticky lg:top-0 lg:h-screen">
       <div className="p-6 border-b border-slate-800">
         <h1 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">
           <span className="h-3 w-3 rounded-full bg-red-600 inline-block"></span>
@@ -47,6 +47,7 @@ export default function Sidebar() {
               key={item.path}
               to={item.path}
               end={item.path === '/'}
+              onClick={onClose}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   isActive
