@@ -1,6 +1,12 @@
 node_modules/
 .env
-.DS_Store
+*.log
 backend/.env
 backend/node_modules/
+admin/node_modules/
+admin/dist/
+admin/.env
 PROGRESS.md
+.DS_Store
+frontend/dist/
+backend/scripts/studyLog.json
