@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const adminRouter = express.Router();
 const Blog = require('../models/Blog');
-const { protect } = require('../middleware/auth.middleware');
+const { protect, requireAdmin } = require('../middleware/auth.middleware');
+const { deleteFromCloudinary } = require('../services/cloudinary.service');
 
 // Helper to create a URL-friendly slug
 const slugify = (text) => {
@@ -81,55 +83,12 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
-const User = require('../models/User');
-
-// Middleware allowing any user (authenticated or guest fallback) to post
-const optionalAuth = async (req, res, next) => {
-  try {
-    let token;
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-      token = req.headers.authorization.split(' ')[1];
-    }
-
-    if (token) {
-      try {
-        const { verifyToken } = require('../utils/jwt');
-        const decoded = verifyToken(token);
-        const user = await User.findById(decoded.userId).select('-password');
-        if (user && user.isActive) {
-          req.user = user;
-          return next();
-        }
-      } catch (err) {
-        // Token invalid/expired, fall through to guest author
-      }
-    }
-
-    // Default guest author for public postings
-    let guestUser = await User.findOne({ email: 'community@stemsage.cc' });
-    if (!guestUser) {
-      guestUser = await User.create({
-        name: 'Community Member',
-        email: 'community@stemsage.cc',
-        role: 'user',
-        authProvider: 'local',
-        isEmailVerified: true,
-        isActive: true
-      });
-    }
-    req.user = guestUser;
-    next();
-  } catch (error) {
-    next(error);
-  }
-};
-
 /**
  * @route   POST /api/blogs
- * @desc    Create a new blog post (Public / Anyone)
- * @access  Public
+ * @desc    Create a new blog post
+ * @access  Authenticated
  */
-router.post('/', optionalAuth, async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
     const { title, slug, excerpt, content, coverImage, category, tags, published } = req.body;
 
@@ -188,4 +147,157 @@ router.post('/', optionalAuth, async (req, res) => {
   }
 });
 
-module.exports = router;
+/* ==================== ADMIN ROUTES ==================== */
+
+/**
+ * @route   GET /api/admin/blogs
+ * @desc    Get all blog posts (published & draft)
+ * @access  Admin
+ */
+adminRouter.get('/', protect, requireAdmin, async (req, res) => {
+  try {
+    const blogs = await Blog.find()
+      .populate('author', 'name profilePicture email')
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      count: blogs.length,
+      data: blogs
+    });
+  } catch (error) {
+    console.error('Admin fetch blogs error:', error.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error fetching blogs.'
+    });
+  }
+});
+
+/**
+ * @route   PUT /api/admin/blogs/:id
+ * @desc    Update a blog post
+ * @access  Admin
+ */
+adminRouter.put('/:id', protect, requireAdmin, async (req, res) => {
+  try {
+    const { title, slug, excerpt, content, coverImage, category, tags, published } = req.body;
+
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blog post not found.'
+      });
+    }
+
+    if (title !== undefined) blog.title = title.trim();
+    if (slug !== undefined) blog.slug = slugify(slug);
+    if (excerpt !== undefined) blog.excerpt = excerpt.trim();
+    if (content !== undefined) blog.content = content.trim();
+    if (coverImage !== undefined) blog.coverImage = coverImage.trim();
+    if (category !== undefined) blog.category = category.trim();
+    if (tags !== undefined) blog.tags = Array.isArray(tags) ? tags : [];
+
+    if (published !== undefined) {
+      blog.published = Boolean(published);
+      if (blog.published && !blog.publishedAt) {
+        blog.publishedAt = new Date();
+      }
+    }
+
+    await blog.save();
+
+    const updatedBlog = await Blog.findById(blog._id).populate('author', 'name profilePicture email');
+
+    return res.status(200).json({
+      success: true,
+      message: 'Blog post updated successfully.',
+      data: updatedBlog
+    });
+  } catch (error) {
+    console.error('Admin update blog error:', error.message);
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+/**
+ * @route   PATCH /api/admin/blogs/:id/publish
+ * @desc    Toggle or update blog published status
+ * @access  Admin
+ */
+adminRouter.patch('/:id/publish', protect, requireAdmin, async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blog post not found.'
+      });
+    }
+
+    const { published } = req.body;
+    blog.published = published !== undefined ? Boolean(published) : !blog.published;
+    if (blog.published && !blog.publishedAt) {
+      blog.publishedAt = new Date();
+    }
+
+    await blog.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Blog ${blog.published ? 'published' : 'unpublished'} successfully.`,
+      data: blog
+    });
+  } catch (error) {
+    console.error('Admin publish blog error:', error.message);
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+/**
+ * @route   DELETE /api/admin/blogs/:id
+ * @desc    Delete a blog post
+ * @access  Admin
+ */
+adminRouter.delete('/:id', protect, requireAdmin, async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blog post not found.'
+      });
+    }
+
+    if (blog.coverImage) {
+      await deleteFromCloudinary(blog.coverImage).catch((err) => {
+        console.error('Cloudinary blog cover delete error:', err.message);
+      });
+    }
+
+    await blog.deleteOne();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Blog post deleted successfully.'
+    });
+  } catch (error) {
+    console.error('Admin delete blog error:', error.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error deleting blog post.'
+    });
+  }
+});
+
+module.exports = {
+  publicRouter: router,
+  adminRouter
+};
