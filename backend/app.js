@@ -5,10 +5,10 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const transporter = require('./src/config/mailer');
-const contactRoutes = require('./src/routes/contact.routes');
+const { publicRouter: contactRoutes, adminRouter: contactAdminRoutes } = require('./src/routes/contact.routes');
 const authRoutes = require('./src/routes/auth.routes');
 const userRoutes = require('./src/routes/user.routes');
-const blogRoutes = require('./src/routes/blog.routes');
+const { publicRouter: blogRoutes, adminRouter: blogAdminRoutes } = require('./src/routes/blog.routes');
 
 // New content routes
 const Product = require('./src/models/Product');
@@ -88,6 +88,12 @@ models.forEach(({ name, model, opts }) => {
   app.use(`/api/${name}`, publicRouter);
   app.use(`/api/admin/${name}`, adminRouter);
 });
+
+// Blog admin routes (GET all, PUT, PATCH publish, DELETE)
+app.use('/api/admin/blogs', blogAdminRoutes);
+
+// Contact message admin routes (GET all, PATCH status, DELETE)
+app.use('/api/admin/contact', contactAdminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -1,10 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const adminRouter = express.Router();
 const ContactMessage = require('../models/ContactMessage');
 const transporter = require('../config/mailer');
+const { protect, requireAdmin } = require('../middleware/auth.middleware');
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+/**
+ * @route   POST /api/contact
+ * @desc    Submit a new contact message
+ * @access  Public
+ */
 router.post('/', async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
@@ -143,4 +150,104 @@ Submission Date/Time: ${submissionDate}`
   }
 });
 
-module.exports = router;
+/* ==================== ADMIN ROUTES ==================== */
+
+/**
+ * @route   GET /api/admin/contact
+ * @desc    Get all contact messages
+ * @access  Admin
+ */
+adminRouter.get('/', protect, requireAdmin, async (req, res) => {
+  try {
+    const messages = await ContactMessage.find().sort({ createdAt: -1 });
+    return res.status(200).json({
+      success: true,
+      count: messages.length,
+      data: messages
+    });
+  } catch (error) {
+    console.error('Admin fetch contact messages error:', error.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error fetching contact messages.'
+    });
+  }
+});
+
+/**
+ * @route   PATCH /api/admin/contact/:id/status
+ * @desc    Update contact message status (NEW, IN_REVIEW, REPLIED, ARCHIVED)
+ * @access  Admin
+ */
+adminRouter.patch('/:id/status', protect, requireAdmin, async (req, res) => {
+  try {
+    const { status } = req.body;
+    const validStatuses = ['NEW', 'IN_REVIEW', 'REPLIED', 'ARCHIVED'];
+
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status value.'
+      });
+    }
+
+    const message = await ContactMessage.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true, runValidators: true }
+    );
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: 'Contact message not found.'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Contact message status updated.',
+      data: message
+    });
+  } catch (error) {
+    console.error('Admin update contact status error:', error.message);
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
+});
+
+/**
+ * @route   DELETE /api/admin/contact/:id
+ * @desc    Delete a contact message
+ * @access  Admin
+ */
+adminRouter.delete('/:id', protect, requireAdmin, async (req, res) => {
+  try {
+    const message = await ContactMessage.findByIdAndDelete(req.params.id);
+
+    if (!message) {
+      return res.status(404).json({
+        success: false,
+        message: 'Contact message not found.'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Contact message deleted successfully.'
+    });
+  } catch (error) {
+    console.error('Admin delete contact message error:', error.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error deleting contact message.'
+    });
+  }
+});
+
+module.exports = {
+  publicRouter: router,
+  adminRouter
+};
