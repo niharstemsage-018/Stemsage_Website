@@ -1,6 +1,6 @@
 import React from 'react';
 import { Search, ChevronLeft, ChevronRight, ToggleLeft, ToggleRight, Trash2, Edit2, Eye } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 
 export default function DataTable({
   data = [],
@@ -10,26 +10,33 @@ export default function DataTable({
   onView,
   onDelete,
   onToggleActive,
+  onPublishToggle,
   searchFields = [],
   title = 'Items',
   emptyMessage = 'No items found.',
-  pageSize = 10,
+  pageSize: initialPageSize = 10,
 }) {
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(initialPageSize);
 
   const filteredData = useMemo(() => {
     if (!search.trim()) return data;
     const query = search.toLowerCase();
-    return data.filter((row) =>
-      searchFields.some((field) => {
-        const value = row[field];
-        return value && String(value).toLowerCase().includes(query);
-      })
-    );
+    return data.filter((row) => {
+      if (searchFields && searchFields.length > 0) {
+        return searchFields.some((field) => {
+          const value = row[field];
+          return value !== null && value !== undefined && String(value).toLowerCase().includes(query);
+        });
+      }
+      return Object.values(row).some(
+        (value) => value !== null && value !== undefined && String(value).toLowerCase().includes(query)
+      );
+    });
   }, [data, search, searchFields]);
 
-  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const totalPages = Math.ceil(filteredData.length / pageSize) || 1;
   const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handlePageChange = (page) => {
@@ -38,10 +45,21 @@ export default function DataTable({
     }
   };
 
+  // Reset to the first page whenever the search term or page size changes,
+  // so the visible rows always match the current filter/slice.
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, pageSize]);
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+          <span className="text-xs font-medium px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600">
+            {filteredData.length} {filteredData.length === 1 ? 'item' : 'items'}
+          </span>
+        </div>
         <div className="relative max-w-xs w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
@@ -107,17 +125,17 @@ export default function DataTable({
                           <Edit2 className="h-4 w-4" />
                         </button>
                       )}
-                      {onToggleActive && typeof row.isActive === 'boolean' && (
+                      {(onToggleActive || onPublishToggle) && (typeof row.isActive === 'boolean' || typeof row.published === 'boolean') && (
                         <button
-                          onClick={() => onToggleActive(row)}
+                          onClick={() => (onPublishToggle ? onPublishToggle(row) : onToggleActive(row))}
                           className={`p-1.5 rounded-lg transition-colors ${
-                            row.isActive
+                            (row.isActive ?? row.published)
                               ? 'text-green-600 hover:bg-green-50'
                               : 'text-slate-400 hover:bg-slate-100'
                           }`}
-                          aria-label={row.isActive ? 'Deactivate' : 'Activate'}
+                          aria-label={(row.isActive ?? row.published) ? 'Deactivate' : 'Activate'}
                         >
-                          {row.isActive ? <ToggleLeft className="h-4 w-4" /> : <ToggleRight className="h-4 w-4" />}
+                          {(row.isActive ?? row.published) ? <ToggleLeft className="h-4 w-4" /> : <ToggleRight className="h-4 w-4" />}
                         </button>
                       )}
                       {onDelete && (
@@ -138,49 +156,58 @@ export default function DataTable({
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div className="px-4 py-3 border-t border-slate-100 flex items-center justify-between">
-          <p className="text-sm text-slate-500">
+      <div className="px-4 py-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+          <span>
             Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, filteredData.length)} of {filteredData.length} results
-          </p>
-          <div className="flex items-center gap-2">
+          </span>
+          <span className="text-slate-300">|</span>
+          <span className="font-medium text-slate-700">
+            Page {currentPage} of {totalPages}
+          </span>
+          <span className="text-slate-300">|</span>
+          <span className="text-slate-600">
+            {filteredData.length} {filteredData.length === 1 ? 'item' : 'items'}
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-sm text-slate-500">
+            <span>Rows:</span>
+            <select
+              value={pageSize}
+              onChange={(e) => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
+              className="text-sm border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+            >
+              {[10, 25, 50].map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div className="flex items-center gap-1">
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
               className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Previous page"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-              let pageNum;
-              if (totalPages <= 5) pageNum = i + 1;
-              else if (currentPage <= 3) pageNum = i + 1;
-              else if (currentPage >= totalPages - 2) pageNum = totalPages - 4 + i;
-              else pageNum = currentPage - 2 + i;
-              return (
-                <button
-                  key={pageNum}
-                  onClick={() => handlePageChange(pageNum)}
-                  className={`w-8 h-8 rounded-lg text-sm font-medium transition-colors ${
-                    currentPage === pageNum
-                      ? 'bg-red-600 text-white'
-                      : 'text-slate-500 hover:bg-slate-100'
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
+            <span className="text-sm text-slate-600 font-medium min-w-[3rem] text-center">
+              {currentPage} / {totalPages}
+            </span>
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
               className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Next page"
             >
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

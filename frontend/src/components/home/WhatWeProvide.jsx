@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 import workshopImg from "../../assets/workshop-img.jpg";
 import eduKitImg from "../../assets/Edu-kit.webp";
+import labSetupImg from "../../assets/services/Lab_Setup.png";
+import { getServices } from "../../services/serviceService";
 
-const servicesProvided = [
+/* ============================================================
+   FALLBACK SERVICES DATA (used when API fails or returns empty)
+   ============================================================ */
+const fallbackServices = [
     {
         id: "01",
         title: "Curriculums and Workshops",
@@ -18,35 +23,73 @@ const servicesProvided = [
         id: "02",
         title: "Smart Lab Setup",
         description: "End-to-end lab setup solutions for schools and colleges, from STEM and Innovation Labs to advanced Engineering Labs, equipped with modern infrastructure, tools, and technology.",
-        image: eduKitImg,
-        link: "/store",
+        image: labSetupImg,
+        link: "/contact",
         buttonText: "Explore Lab Solutions"
     },
     {
         id: "03",
-        title: "Industrial Training Programs",
-        description: "Industry-aligned technical training in Embedded Systems, Industrial IoT, Autonomous Robotics, ROS, VLSI, Industrial Automation, Drone Technology, and Advanced Circuit Design.",
-        image: "/images/hero-1.png",
+        title: "Smart Educational Kits",
+        description: "Innovative, hands-on educational kits that make STEM concepts, electronics, robotics, and emerging technologies engaging, interactive, and accessible to learners.",
+        image: eduKitImg,
         link: "/store",
-        buttonText: "Explore Training Programs"
+        buttonText: "Explore Kits"
     },
     {
         id: "04",
-        title: "Teacher Capacity Building",
-        description: "Professional development programs in STEM, AI, Robotics, IoT, Design Thinking, and innovative teaching methodologies.",
-        image: "/images/hero-3.png",
-        link: "/services",
-        buttonText: "Explore Programs"
+        title: "Industrial Training Programs",
+        description: "Industry-aligned technical training in Embedded Systems, Industrial IoT, Autonomous Robotics, ROS, VLSI, Industrial Automation, Drone Technology, and Advanced Circuit Design.",
+        image: null,
+        link: "/contact",
+        buttonText: "Explore Training Programs"
     },
     {
         id: "05",
+        title: "Teacher Capacity Building",
+        description: "Professional development programs in STEM, AI, Robotics, IoT, Design Thinking, and innovative teaching methodologies.",
+        image: null,
+        link: "/contact",
+        buttonText: "Explore Programs"
+    },
+    {
+        id: "06",
         title: "Digital Learning Ecosystem",
         description: "Self-learning platforms, tutorial videos, educational resources, and digital curriculums that support flexible, technology-driven learning.",
-        image: "/images/hero-3.png",
-        link: "/services",
+        image: null,
+        link: "/contact",
         buttonText: "Explore Platforms"
     },
 ];
+
+/* Map API service to component shape */
+function mapApiService(apiService, index) {
+    const linkMap = {
+        "Curriculums and Workshops": "/workshops",
+        "Smart Lab Setup": "/contact",
+        "Smart Educational Kits": "/store",
+        "Industrial Training Programs": "/contact",
+        "Teacher Capacity Building": "/contact",
+        "Digital Learning Ecosystem": "/contact",
+    };
+
+    const buttonTextMap = {
+        "Curriculums and Workshops": "Explore Programs",
+        "Smart Lab Setup": "Explore Lab Solutions",
+        "Smart Educational Kits": "Explore Kits",
+        "Industrial Training Programs": "Explore Training Programs",
+        "Teacher Capacity Building": "Explore Programs",
+        "Digital Learning Ecosystem": "Explore Platforms",
+    };
+
+    return {
+        id: String(apiService._id || index),
+        title: apiService.title,
+        description: apiService.description,
+        image: apiService.image,
+        link: linkMap[apiService.title] || "/services",
+        buttonText: buttonTextMap[apiService.title] || "Explore",
+    };
+}
 
 function CardImage({ src, alt }) {
     const [hasError, setHasError] = useState(false);
@@ -111,6 +154,44 @@ export function ServiceCard({ item }) {
 }
 
 function WhatWeProvide() {
+    const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        async function loadServices() {
+            try {
+                setLoading(true);
+                const apiServices = await getServices();
+                if (!cancelled) {
+                    if (apiServices && apiServices.length > 0) {
+                        const mapped = apiServices.map(mapApiService);
+                        setServices(mapped);
+                    } else {
+                        // API succeeded but returned empty - hide section (empty state)
+                        setServices([]);
+                    }
+                }
+            } catch (err) {
+                console.warn("Failed to fetch services for home, using fallback:", err.message);
+                if (!cancelled) {
+                    setError(true);
+                    setServices(fallbackServices);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        loadServices();
+        return () => { cancelled = true; };
+    }, []);
+
+    // Hide section entirely on empty state (no services and no error)
+    if (!loading && !error && services.length === 0) {
+        return null;
+    }
+
     return (
         <section className="relative overflow-hidden bg-white py-16 sm:py-24 px-5 sm:px-8 border-b border-slate-100">
             <div className="relative mx-auto max-w-6xl">
@@ -125,9 +206,28 @@ function WhatWeProvide() {
 
                 {/* 3-column Grid — first 3 only */}
                 <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {servicesProvided.slice(0, 3).map((service) => (
-                        <ServiceCard key={service.id} item={service} />
-                    ))}
+                    {loading ? (
+                        Array.from({ length: 3 }).map((_, i) => (
+                            <div key={i} className="animate-pulse">
+                                <div className="group flex flex-col rounded-xl bg-white border border-slate-200 overflow-hidden shadow-sm">
+                                    <div className="w-full h-40 bg-slate-100" />
+                                    <div className="h-px bg-slate-100" />
+                                    <div className="flex-1 flex flex-col justify-between px-5 pt-4 pb-5">
+                                        <div className="space-y-3">
+                                            <div className="h-8 bg-slate-200 rounded w-3/4" />
+                                            <div className="h-12 bg-slate-200 rounded w-full" />
+                                            <div className="h-12 bg-slate-200 rounded w-full" />
+                                        </div>
+                                        <div className="h-10 bg-slate-200 rounded-lg w-1/2" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        services.slice(0, 3).map((service) => (
+                            <ServiceCard key={service.id} item={service} />
+                        ))
+                    )}
                 </div>
 
                 {/* View All Services CTA */}

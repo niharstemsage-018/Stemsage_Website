@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/common/Footer";
 import PageHero from "../components/mock/PageHero";
 import FilterBar from "../components/mock/FilterBar";
 import Modal from "../components/mock/Modal";
 import StatusBadge from "../components/mock/StatusBadge";
-import { workshops, workshopCategories } from "../data/workshops";
+import { workshops as fallbackWorkshops, workshopCategories } from "../data/workshops";
+import { getWorkshops } from "../services/workshopService";
 
 const ICON_MAP = {
   Robotics: "🤖", Electronics: "⚡", IoT: "📡",
@@ -244,6 +245,37 @@ function Workshops() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [registerTarget, setRegisterTarget] = useState(null);
   const [viewTarget, setViewTarget] = useState(null);
+  const [workshops, setWorkshops] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadWorkshops() {
+      try {
+        setLoading(true);
+        const apiWorkshops = await getWorkshops();
+        if (!cancelled) {
+          if (apiWorkshops && apiWorkshops.length > 0) {
+            setWorkshops(apiWorkshops);
+          } else {
+            // API succeeded but returned empty
+            setWorkshops([]);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch workshops, using fallback:", err.message);
+        if (!cancelled) {
+          setError(true);
+          setWorkshops(fallbackWorkshops);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    loadWorkshops();
+    return () => { cancelled = true; };
+  }, []);
 
   const filtered = workshops.filter(
     (w) => activeCategory === "All" || w.category === activeCategory
@@ -263,7 +295,32 @@ function Workshops() {
           <h2 style={{ margin: 0, fontSize: "24px", fontWeight: 900, color: "#0f172a" }}>Upcoming Workshops</h2>
         </div>
         <FilterBar categories={workshopCategories} active={activeCategory} onChange={setActiveCategory} />
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "24px" }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="animate-pulse" style={{ background: "white", borderRadius: "14px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+                <div style={{ background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)", height: "130px" }} />
+                <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                  <div style={{ height: "20px", background: "#e2e8f0", borderRadius: "4px", width: "70%" }} />
+                  <div style={{ height: "16px", background: "#e2e8f0", borderRadius: "4px", width: "90%" }} />
+                  <div style={{ height: "16px", background: "#e2e8f0", borderRadius: "4px", width: "80%" }} />
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "4px" }}>
+                    <div style={{ height: "24px", background: "#e2e8f0", borderRadius: "6px", width: "80px" }} />
+                    <div style={{ height: "24px", background: "#e2e8f0", borderRadius: "6px", width: "80px" }} />
+                    <div style={{ height: "24px", background: "#e2e8f0", borderRadius: "6px", width: "80px" }} />
+                    <div style={{ height: "24px", background: "#e2e8f0", borderRadius: "6px", width: "80px" }} />
+                  </div>
+                  <div style={{ display: "flex", gap: "10px", marginTop: "auto", paddingTop: "14px", borderTop: "1px solid #f1f5f9" }}>
+                    <div style={{ flex: 1, height: "38px", background: "#e2e8f0", borderRadius: "9999px" }} />
+                    <div style={{ flex: 1, height: "38px", background: "#e2e8f0", borderRadius: "9999px" }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : workshops.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8" }}>Nothing here yet</div>
+        ) : filtered.length === 0 ? (
           <div style={{ textAlign: "center", padding: "60px 0", color: "#94a3b8" }}>No workshops in this category right now.</div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "24px" }}>

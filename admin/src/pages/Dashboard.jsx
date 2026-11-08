@@ -33,6 +33,22 @@ const statCards = [
   { key: 'blogs', label: 'Blogs', icon: FileText, color: 'bg-teal-100 text-teal-600', path: '/blogs' },
 ];
 
+// Count every item (active and hidden) via the admin endpoints, so the
+// dashboard totals match what is actually stored, not just what is public.
+async function fetchAdminCount(endpoint) {
+  try {
+    const res = await api.get(`/admin/${endpoint}`);
+    const payload = res.data;
+    if (Array.isArray(payload.data)) return payload.data.length;
+    if (Array.isArray(payload)) return payload.length;
+    if (typeof payload.count === 'number') return payload.count;
+    return 0;
+  } catch (err) {
+    console.error(`Failed to load count for ${endpoint}:`, err);
+    return 0;
+  }
+}
+
 export default function Dashboard() {
   const [counts, setCounts] = useState({});
   const [messages, setMessages] = useState([]);
@@ -42,19 +58,15 @@ export default function Dashboard() {
     const fetchAll = async () => {
       try {
         setLoading(true);
-        const promises = statCards.map(async (card) => {
-          try {
-            const res = await api.get(`/admin/${contentTypes[card.key].endpoint}`);
-            return { key: card.key, count: res.data.data?.length || res.data?.length || 0 };
-          } catch {
-            return { key: card.key, count: 0 };
-          }
-        });
 
-        const [countResults, messagesRes] = await Promise.all([
-          Promise.all(promises),
-          api.get('/admin/contact'),
-        ]);
+        const countResults = await Promise.all(
+          statCards.map(async (card) => ({
+            key: card.key,
+            count: await fetchAdminCount(contentTypes[card.key].endpoint),
+          }))
+        );
+
+        const messagesRes = await api.get('/admin/contact');
 
         const countMap = Object.fromEntries(countResults.map((r) => [r.key, r.count]));
         setCounts(countMap);

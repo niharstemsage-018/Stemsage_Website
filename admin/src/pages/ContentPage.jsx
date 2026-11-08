@@ -30,7 +30,10 @@ export default function ContentPage() {
   const fetchData = useCallback(async () => {
     try {
       setLoading(true);
-      const endpoint = config.isReadOnly ? `admin/${config.endpoint}` : config.endpoint;
+      // Always use the admin endpoint so every row (active and inactive) is
+      // reachable in the table. The public endpoint filters out inactive rows,
+      // which silently hid items and suppressed pagination.
+      const endpoint = `admin/${config.endpoint}`;
       const res = await api.get(`/${endpoint}`);
       setData(res.data.data || res.data);
     } catch (err) {

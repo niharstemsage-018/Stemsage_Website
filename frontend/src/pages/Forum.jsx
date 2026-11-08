@@ -6,8 +6,47 @@ import { getBlogs, createBlog } from "../services/blogService";
 
 const filters = ["All", "Electronics", "Robotics", "Programming", "IoT", "3D Design"];
 
+/* ============================================================
+   FALLBACK BLOG DATA (used when API fails)
+   ============================================================ */
+const fallbackBlogs = [
+  {
+    id: "blog-1",
+    title: "Getting Started with Arduino: A Beginner's Guide",
+    slug: "getting-started-arduino",
+    authorName: "STEMSAGE Team",
+    category: "Electronics",
+    content: "Arduino is an open-source electronics platform based on easy-to-use hardware and software. This guide covers everything you need to know to start your first Arduino project.",
+    commentsCount: "5",
+    date: "15 Mar, 2026",
+    isDbBlog: false
+  },
+  {
+    id: "blog-2",
+    title: "Building Your First Robot: Step-by-Step Tutorial",
+    slug: "building-first-robot",
+    authorName: "Robotics Expert",
+    category: "Robotics",
+    content: "Learn how to build a simple line-following robot using Arduino and basic sensors. This tutorial is perfect for beginners who want to get hands-on with robotics.",
+    commentsCount: "12",
+    date: "22 Feb, 2026",
+    isDbBlog: false
+  },
+  {
+    id: "blog-3",
+    title: "IoT Home Automation with ESP32",
+    slug: "iot-home-automation-esp32",
+    authorName: "IoT Developer",
+    category: "IoT",
+    content: "Control your home appliances remotely using ESP32, MQTT, and a mobile app. Complete guide with code examples and circuit diagrams.",
+    commentsCount: "8",
+    date: "10 Jan, 2026",
+    isDbBlog: false
+  },
+];
+
 function Forum() {
-  const { user, token, isAuthenticated } = useAuth();
+  const { user, token } = useAuth();
   const [active, setActive] = useState("All");
   const [dbBlogs, setDbBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,7 +60,7 @@ function Forum() {
     try {
       setLoading(true);
       const response = await getBlogs();
-      if (response.success && Array.isArray(response.data)) {
+      if (response.success && Array.isArray(response.data) && response.data.length > 0) {
         const formatted = response.data.map((b) => ({
           id: b._id,
           title: b.title,
@@ -36,17 +75,25 @@ function Forum() {
           isDbBlog: true
         }));
         setDbBlogs(formatted);
+      } else {
+        // API succeeded but returned empty
+        setDbBlogs(fallbackBlogs);
       }
     } catch (err) {
-      console.warn("Could not fetch backend blogs from MongoDB:", err.message);
-      setDbBlogs([]);
+      console.warn("Could not fetch backend blogs from MongoDB, using fallback:", err.message);
+      setDbBlogs(fallbackBlogs);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadBlogs();
+    let cancelled = false;
+    (async () => {
+      await loadBlogs();
+      if (!cancelled) setLoading(false);
+    })();
+    return () => { cancelled = true; };
   }, [loadBlogs]);
 
   const visiblePosts = dbBlogs.filter(
@@ -151,7 +198,12 @@ function Forum() {
           {loading ? (
             <div className="py-16 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-100">
               <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-red-600 mb-3" />
-              <p className="text-sm font-medium">Fetching blog articles from MongoDB...</p>
+              <p className="text-sm font-medium">Loading articles...</p>
+            </div>
+          ) : dbBlogs.length === 0 ? (
+            <div className="py-12 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-100">
+              <BookOpen className="mx-auto h-10 w-10 text-slate-300 mb-2" />
+              <p className="text-sm font-medium">Nothing here yet</p>
             </div>
           ) : visiblePosts.length === 0 ? (
             <div className="py-12 text-center text-slate-400 bg-slate-50 rounded-2xl border border-slate-100">

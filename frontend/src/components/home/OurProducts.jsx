@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
     CheckCircle2,
@@ -12,145 +12,49 @@ import {
     FlaskConical,
     Wrench,
     GraduationCap,
-    Baby,
 } from "lucide-react";
+import { getHomeProducts } from "../../services/productService";
+import { fallbackProducts } from "../../constants/fallbackProducts";
 
-/* ============================================================
-   PRODUCT DATA
-   ============================================================ */
-const products = [
-    {
-        id: "01",
-        badge: "STEM Kit",
-        icon: FlaskConical,
-        title: "My STEM Box",
-        subtitle: "Hands-On Science & Discovery",
-        features: [
-            "20+ Hands-On STEM Activities",
-            "5 Core Subjects Covered",
-            "Step-by-Step Activity Manuals",
-            "Self-Learning Video Tutorials",
+/* Map API product to component shape */
+function mapApiProduct(apiProduct, index) {
+    const iconMap = {
+        Electronics: Cpu,
+        Robotics: Wrench,
+        IoT: Zap,
+        "3D Printing": FlaskConical,
+        Components: Cpu,
+        Kits: GraduationCap,
+        STEM: FlaskConical,
+        Programming: Cpu,
+        AI: Zap,
+    };
+
+    return {
+        id: String(apiProduct._id || index),
+        badge: apiProduct.category || "Product",
+        icon: iconMap[apiProduct.category] || Cpu,
+        title: apiProduct.title,
+        subtitle: apiProduct.description?.substring(0, 60) || "STEM Product",
+        features: apiProduct.features?.slice(0, 4) || [
+            "High-quality components",
+            "Comprehensive guides",
+            "Hands-on learning",
         ],
-        price: "2,999",
-        priceType: "fixed",
-        tags: ["STEM", "Science", "Physics", "Chemistry", "Biology", "Math"],
-        cta: "Buy Now",
-        ctaType: "buy",
-        ctaLink: "/store",
-        featured: false,
-    },
-    {
-        id: "02",
-        badge: "Innovation Kit",
-        icon: Cpu,
-        title: "My Innovation Box",
-        subtitle: "Build, Code & Create",
-        features: [
-            "200+ Buildable Projects",
-            "40 Essential Components",
-            "Digital Project Manuals",
-            "Self-Learning Resources",
-        ],
-        price: "4,999",
-        priceType: "fixed",
-        tags: ["Robotics", "IoT", "Electronics", "Arduino", "Programming"],
-        cta: "Buy Now",
-        ctaType: "buy",
-        ctaLink: "/store",
-        featured: true,
-    },
-    {
-        id: "03",
-        badge: "Montessori Lab",
-        icon: Baby,
-        title: "Smart Mont Lab",
-        subtitle: "Early Childhood STEM Learning",
-        features: [
-            "20+ Big Activity Sets",
-            "12 STEM Activities per Year for Each Grade",
-            "Nursery, LKG & UKG Curriculum",
-            "Child-Friendly Furniture & Learning Materials",
-        ],
-        price: "Enquire for Price",
-        priceType: "enquire",
-        tags: ["Montessori", "Early Education", "STEM", "Lab Setup"],
-        cta: "Enquire Now",
-        ctaType: "enquire",
-        ctaLink: "/contact",
-        featured: false,
-    },
-    {
-        id: "04",
-        badge: "Maker Space",
-        icon: Wrench,
-        title: "STEMSAGE Smart Maker Space",
-        subtitle: "Innovation Hub for Schools & Colleges",
-        features: [
-            "Dedicated Innovation & Maker Space Setup",
-            "Robotics & Electronics Project Development",
-            "IoT & Smart Technology Exploration",
-            "3D Printing & Rapid Prototyping",
-            "Customizable Lab Setup for Schools & Colleges",
-        ],
-        price: "Enquire for Price",
-        priceType: "enquire",
-        tags: ["Schools", "Innovation", "Robotics & AI", "Lab Setup", "Engineering"],
-        cta: "Enquire Now",
-        ctaType: "enquire",
-        ctaLink: "/contact",
-        featured: false,
-    },
-    {
-        id: "05",
-        badge: "Curriculum",
-        icon: GraduationCap,
-        title: "Yearlong Robotics & Physical AI Curriculum",
-        subtitle: "School-Wide Experiential Learning Program",
-        features: [
-            "10 Hands-On Learning Activities",
-            "Group-Based Robotics Kits",
-            "Teacher Training & Orientation",
-            "LMS Access & Digital Learning Resources",
-            "Dedicated STEMSAGE Host Trainer",
-            "School-Customized Curriculum",
-        ],
-        price: "Enquire for Price",
-        priceType: "enquire",
-        tags: ["Robotics", "Physical AI", "STEM Education", "School Curriculum", "Experiential Learning"],
-        cta: "Enquire Now",
-        ctaType: "enquire",
-        ctaLink: "/contact",
-        featured: true,
-    },
-    {
-        id: "06",
-        badge: "Master Class",
-        icon: Zap,
-        title: "STEMSAGE Arduino Master Class",
-        subtitle: "From Circuits to Code — On Campus",
-        features: [
-            "20+ Hands-On Projects",
-            "Electronics & Embedded Systems Fundamentals",
-            "Arduino Programming & Circuit Design",
-            "5-Phase Structured Learning Program",
-            "~20 Hours of Training",
-            "On-Campus Implementation",
-            "Certificate-Based Learning Program",
-        ],
-        price: "Enquire for Price",
-        priceType: "enquire",
-        tags: ["Arduino", "Robotics", "Electronics", "Embedded Systems", "Coding", "Automation"],
-        cta: "Enquire Now",
-        ctaType: "enquire",
-        ctaLink: "/contact",
-        featured: false,
-    },
-];
+        price: apiProduct.price ? `₹${apiProduct.price}` : "Enquire for Price",
+        priceType: apiProduct.price ? "fixed" : "enquire",
+        tags: apiProduct.tags?.slice(0, 6) || [apiProduct.category].filter(Boolean),
+        cta: apiProduct.price ? "Buy Now" : "Enquire Now",
+        ctaType: apiProduct.price ? "buy" : "enquire",
+        ctaLink: apiProduct.price ? "/store" : "/contact",
+        featured: apiProduct.isFeatured || apiProduct.showOnHome || false,
+        image: apiProduct.image,
+    };
+}
 
 /* ============================================================
    PRODUCT CARD
    ============================================================ */
-export { products };
 export function ProductCard({ product }) {
     const Icon = product.icon;
 
@@ -289,6 +193,44 @@ export function ProductCard({ product }) {
    MAIN SECTION
    ============================================================ */
 function OurProducts() {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        async function loadProducts() {
+            try {
+                setLoading(true);
+                const apiProducts = await getHomeProducts();
+                if (!cancelled) {
+                    if (apiProducts && apiProducts.length > 0) {
+                        const mapped = apiProducts.map(mapApiProduct);
+                        setProducts(mapped);
+                    } else {
+                        // API succeeded but returned empty - hide section (empty state)
+                        setProducts([]);
+                    }
+                }
+            } catch (err) {
+                console.warn("Failed to fetch products for home, using fallback:", err.message);
+                if (!cancelled) {
+                    setError(true);
+                    setProducts(fallbackProducts);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        loadProducts();
+        return () => { cancelled = true; };
+    }, []);
+
+    // Hide section entirely on empty state (no products and no error)
+    if (!loading && !error && products.length === 0) {
+        return null;
+    }
+
     return (
         <section className="relative overflow-hidden bg-white py-16 sm:py-24 px-5 sm:px-8 border-b border-slate-100">
             {/* Subtle background accent */}
@@ -298,7 +240,6 @@ function OurProducts() {
             <div className="relative mx-auto max-w-7xl">
                 {/* Section Header */}
                 <div className="text-center">
-
                     <h2 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl leading-tight">
                         Explore Our{" "}
                         <span className="text-red-600">Product Range</span>
@@ -307,9 +248,30 @@ function OurProducts() {
 
                 {/* Product Grid */}
                 <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {products.slice(0, 3).map((product, index) => (
-                        <ProductCard key={product.id} product={product} index={index} />
-                    ))}
+                    {loading ? (
+                        Array.from({ length: 3 }).map((_, i) => (
+                            <div key={i} className="animate-pulse">
+                                <div className="rounded-xl bg-white border border-slate-200 overflow-hidden">
+                                    <div className="h-40 bg-slate-100" />
+                                    <div className="p-5 space-y-3">
+                                        <div className="h-8 bg-slate-200 rounded w-3/4" />
+                                        <div className="h-4 bg-slate-200 rounded w-1/2" />
+                                        <div className="h-4 bg-slate-200 rounded w-1/2" />
+                                        <div className="h-4 bg-slate-200 rounded w-1/2" />
+                                        <div className="h-4 bg-slate-200 rounded w-1/2" />
+                                        <div className="mt-3 flex gap-1">
+                                            <div className="h-6 w-20 bg-slate-200 rounded-full" />
+                                            <div className="h-6 w-20 bg-slate-200 rounded-full" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        products.slice(0, 3).map((product, index) => (
+                            <ProductCard key={product.id} product={product} index={index} />
+                        ))
+                    )}
                 </div>
 
                 {/* See All Products Button */}
@@ -328,4 +290,3 @@ function OurProducts() {
 }
 
 export default OurProducts;
-

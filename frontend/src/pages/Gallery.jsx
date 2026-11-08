@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Footer from "../components/common/Footer";
 import { X, ChevronLeft, ChevronRight, Maximize2, Heart } from "lucide-react";
+import { getGalleryImages } from "../services/galleryService";
 
 import img1 from "../assets/gallery/image_01.jpg";
 import img2 from "../assets/gallery/image_02.jpg";
@@ -14,7 +15,10 @@ import img9 from "../assets/gallery/image_09.jpg";
 import img10 from "../assets/gallery/image_10.jpg";
 import img11 from "../assets/gallery/image_11.jpg";
 
-const galleryItems = [
+/* ============================================================
+   FALLBACK GALLERY DATA (used when API fails or returns empty)
+   ============================================================ */
+const fallbackGalleryItems = [
   { id: 1, title: "STEM Workshop Presentation", src: img1 },
   { id: 2, title: "Hands-on Circuit Wiring", src: img2 },
   { id: 3, title: "Robotics & Microcontroller Debugging", src: img3 },
@@ -32,29 +36,74 @@ function Gallery() {
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
   const [liked, setLiked] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [galleryItems, setGalleryItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  // Load gallery images from API
+  useEffect(() => {
+    let cancelled = false;
+    async function loadGallery() {
+      try {
+        setLoading(true);
+        const apiItems = await getGalleryImages();
+        if (!cancelled) {
+          if (apiItems && apiItems.length > 0) {
+            setGalleryItems(apiItems);
+          } else {
+            // API succeeded but returned empty
+            setGalleryItems([]);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch gallery images, using fallback:", err.message);
+        if (!cancelled) {
+          setError(true);
+          setGalleryItems(fallbackGalleryItems);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    loadGallery();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Fallback only applies when the API failed; an empty-but-successful
+  // response renders nothing rather than falling back to demo images.
+  const itemsToUse = error ? fallbackGalleryItems : galleryItems;
 
   // Keyboard navigation for lightbox
   useEffect(() => {
+    if (selectedImageIndex === null) return;
     function handleKeyDown(e) {
-      if (e.key === "Escape") setSelectedImageIndex(null);
-      if (e.key === "ArrowLeft") handlePrevImage();
-      if (e.key === "ArrowRight") handleNextImage();
+      if (e.key === "Escape") {
+        setSelectedImageIndex(null);
+      } else if (e.key === "ArrowLeft") {
+        setSelectedImageIndex((prev) =>
+          prev === null || prev === 0 ? itemsToUse.length - 1 : prev - 1
+        );
+      } else if (e.key === "ArrowRight") {
+        setSelectedImageIndex((prev) =>
+          prev === null || prev === itemsToUse.length - 1 ? 0 : prev + 1
+        );
+      }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectedImageIndex]);
+  }, [selectedImageIndex, itemsToUse.length]);
 
   const handlePrevImage = () => {
     if (selectedImageIndex === null) return;
     setSelectedImageIndex((prev) =>
-      prev === 0 ? galleryItems.length - 1 : prev - 1
+      prev === 0 ? itemsToUse.length - 1 : prev - 1
     );
   };
 
   const handleNextImage = () => {
     if (selectedImageIndex === null) return;
     setSelectedImageIndex((prev) =>
-      prev === galleryItems.length - 1 ? 0 : prev + 1
+      prev === itemsToUse.length - 1 ? 0 : prev + 1
     );
   };
 
@@ -70,25 +119,37 @@ function Gallery() {
       {/* ─── Pinterest Masonry Gallery Grid ─── */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-20 pt-4">
         <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-          {galleryItems.map((item, index) => (
-            <div
-              key={item.id}
-              onClick={() => setSelectedImageIndex(index)}
-              className="break-inside-avoid group relative overflow-hidden bg-slate-100 cursor-pointer border border-slate-200/60 shadow-xs hover:shadow-md transition-all duration-300"
-            >
-              <img
-                src={item.src}
-                alt={item.title}
-                className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                <span className="bg-white/90 text-slate-900 rounded-full p-2.5 shadow-md">
-                  <Maximize2 size={16} />
-                </span>
+          {loading ? (
+            Array.from({ length: 12 }).map((_, i) => (
+              <div key={i} className="animate-pulse break-inside-avoid">
+                <div className="aspect-[4/3] bg-slate-100 rounded-lg" />
               </div>
+            ))
+          ) : galleryItems.length === 0 ? (
+            <div className="text-center py-16 text-slate-500 font-medium">
+              Nothing here yet
             </div>
-          ))}
+          ) : (
+            itemsToUse.map((item, index) => (
+              <div
+                key={item.id}
+                onClick={() => setSelectedImageIndex(index)}
+                className="break-inside-avoid group relative overflow-hidden bg-slate-100 cursor-pointer border border-slate-200/60 shadow-xs hover:shadow-md transition-all duration-300"
+              >
+                <img
+                  src={item.src}
+                  alt={item.title}
+                  className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                  <span className="bg-white/90 text-slate-900 rounded-full p-2.5 shadow-md">
+                    <Maximize2 size={16} />
+                  </span>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </section>
 
@@ -149,8 +210,8 @@ function Gallery() {
           {/* Centered Large Image */}
           <div className="flex items-center justify-center w-full h-[85vh] max-w-[85vw] mx-auto pointer-events-none">
             <img
-              src={galleryItems[selectedImageIndex].src}
-              alt={galleryItems[selectedImageIndex].title}
+              src={itemsToUse[selectedImageIndex].src}
+              alt={itemsToUse[selectedImageIndex].title}
               className="h-[80vh] max-h-[84vh] max-w-[82vw] w-auto object-contain transition-all duration-300 pointer-events-auto shadow-sm"
               style={{ minHeight: "65vh" }}
             />

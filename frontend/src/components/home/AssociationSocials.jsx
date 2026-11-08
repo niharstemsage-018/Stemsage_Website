@@ -1,4 +1,5 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { getAssociations } from "../../services/associationService";
 
 import cpLogo from "../../assets/association_logos/CP.png";
 import droniLogo from "../../assets/association_logos/DroniCulture.webp";
@@ -7,7 +8,10 @@ import mentorLogo from "../../assets/association_logos/MentorPrep.webp";
 import nmimsLogo from "../../assets/association_logos/NMIMS.svg";
 import sesLogo from "../../assets/association_logos/SES.png";
 
-const logosList = [
+/* ============================================================
+   FALLBACK LOGOS DATA (used when API fails or returns empty)
+   ============================================================ */
+const fallbackLogos = [
     { name: "CP", src: cpLogo },
     { name: "Droni Culture", src: droniLogo },
     { name: "Madari Veda", src: madariLogo },
@@ -16,12 +20,61 @@ const logosList = [
     { name: "SES Education", src: sesLogo },
 ];
 
-// Duplicate arrays for 100% seamless marquee looping
-const row1Items = [...logosList, ...logosList, ...logosList, ...logosList];
-const row2Items = [...logosList].reverse().concat([...logosList].reverse(), [...logosList].reverse(), [...logosList].reverse());
+/* Map API association to component shape */
+function mapApiAssociation(apiAssoc, index) {
+    return {
+        id: String(apiAssoc._id || index),
+        name: apiAssoc.name,
+        src: apiAssoc.src,
+    };
+}
 
 
 function AssociationSocials() {
+    const [associations, setAssociations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        async function loadAssociations() {
+            try {
+                setLoading(true);
+                const apiAssociations = await getAssociations();
+                if (!cancelled) {
+                    if (apiAssociations && apiAssociations.length > 0) {
+                        const mapped = apiAssociations.map(mapApiAssociation);
+                        setAssociations(mapped);
+                    } else {
+                        // API succeeded but returned empty - hide section (empty state)
+                        setAssociations([]);
+                    }
+                }
+            } catch (err) {
+                console.warn("Failed to fetch associations, using fallback:", err.message);
+                if (!cancelled) {
+                    setError(true);
+                    setAssociations(fallbackLogos);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        loadAssociations();
+        return () => { cancelled = true; };
+    }, []);
+
+    // Hide section entirely on empty state (no associations and no error)
+    if (!loading && !error && associations.length === 0) {
+        return null;
+    }
+
+    const logosToUse = error ? fallbackLogos : associations;
+
+    // Duplicate arrays for 100% seamless marquee looping
+    const row1Items = [...logosToUse, ...logosToUse, ...logosToUse, ...logosToUse];
+    const row2Items = [...logosToUse].reverse().concat([...logosToUse].reverse(), [...logosToUse].reverse(), [...logosToUse].reverse());
+
     return (
         <section className="relative overflow-hidden bg-white py-16 sm:py-24 border-b border-slate-100">
             {/* Inline Styles for Slow Dual-Direction Marquee */}

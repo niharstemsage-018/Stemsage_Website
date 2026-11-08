@@ -84,7 +84,7 @@ const models = [
 ];
 
 models.forEach(({ name, model, opts }) => {
-  const { publicRouter, adminRouter } = createCrudRoutes(model, opts);
+  const { publicRouter, adminRouter } = createCrudRoutes(model, { ...opts, modelName: name });
   app.use(`/api/${name}`, publicRouter);
   app.use(`/api/admin/${name}`, adminRouter);
 });
