@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Play, Quote } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play, Quote, Loader2 } from "lucide-react";
+import { getTestimonials } from "../../services/testimonialService";
 
 /*
  * testimonials — mix of text and video items.
@@ -14,7 +15,7 @@ import { ChevronLeft, ChevronRight, Play, Quote } from "lucide-react";
  *   name, role, avatar
  *   (set videoSrc: null to show a placeholder until a real file is added)
  */
-const testimonials = [
+const fallbackTestimonials = [
     {
         id: "t-1",
         type: "text",
@@ -27,7 +28,7 @@ const testimonials = [
     {
         id: "t-2",
         type: "video",
-        videoSrc: null, // ← replace with real video path, e.g. "/videos/pushkar-dhami.mp4"
+        videoSrc: null,
         name: "Pushkar Singh Dhami",
         role: "CM of Uttarakhand",
         avatar: "/images/hero-1.png",
@@ -62,7 +63,7 @@ const testimonials = [
     {
         id: "t-6",
         type: "video",
-        videoSrc: null, // ← replace with real video path, e.g. "/videos/shreshtha.mp4"
+        videoSrc: null,
         name: "Shreshtha Singh",
         role: "Student, DAPS Swaminirajan Vidyamandir",
         avatar: "/images/hero-3.png",
@@ -95,6 +96,19 @@ const testimonials = [
         avatar: "/images/hero-3.png",
     },
 ];
+
+/* Map API testimonial to component shape */
+function mapApiTestimonial(apiTestimonial, index) {
+    return {
+        id: String(apiTestimonial._id || index),
+        type: apiTestimonial.type || "text",
+        quote: apiTestimonial.quote,
+        videoSrc: apiTestimonial.videoSrc,
+        name: apiTestimonial.name,
+        role: apiTestimonial.role,
+        avatar: apiTestimonial.avatar,
+    };
+}
 
 /* ─── How many cards to show per page depending on viewport ─────────── */
 function useCardsPerPage() {
@@ -230,15 +244,48 @@ function TextCard({ item }) {
 /* ─── Main Section ───────────────────────────────────────────────────── */
 function TestimonialsSection() {
     const cardsPerPage = useCardsPerPage();
-    const [offset, setOffset] = useState(0); // index of first visible card
-    const [animDir, setAnimDir] = useState(null); // "left" | "right" | null
+    const [testimonials, setTestimonials] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+    const [offset, setOffset] = useState(0);
+    const [animDir, setAnimDir] = useState(null);
     const [visible, setVisible] = useState(true);
     const autoRef = useRef(null);
+
+    // Load testimonials from API
+    useEffect(() => {
+        let cancelled = false;
+        async function loadTestimonials() {
+            try {
+                setLoading(true);
+                const apiTestimonials = await getTestimonials();
+                if (!cancelled) {
+                    if (apiTestimonials && apiTestimonials.length > 0) {
+                        const mapped = apiTestimonials.map(mapApiTestimonial);
+                        setTestimonials(mapped);
+                    } else {
+                        // API succeeded but returned empty - hide section (empty state)
+                        setTestimonials([]);
+                    }
+                }
+            } catch (err) {
+                console.warn("Failed to fetch testimonials, using fallback:", err.message);
+                if (!cancelled) {
+                    setError(true);
+                    setTestimonials(fallbackTestimonials);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        loadTestimonials();
+        return () => { cancelled = true; };
+    }, []);
 
     const total = testimonials.length;
     const maxOffset = Math.max(0, total - cardsPerPage);
 
-    /* Clamp offset when cardsPerPage changes */
+    /* Clamp offset when cardsPerPage or testimonials change */
     useEffect(() => {
         setOffset((prev) => Math.min(prev, Math.max(0, total - cardsPerPage)));
     }, [cardsPerPage, total]);
@@ -273,6 +320,11 @@ function TestimonialsSection() {
 
     const visibleItems = testimonials.slice(offset, offset + cardsPerPage);
     const dotCount = maxOffset + 1;
+
+    // Hide section entirely on empty state (no testimonials and no error)
+    if (!loading && !error && testimonials.length === 0) {
+        return null;
+    }
 
     return (
         <section
@@ -332,11 +384,33 @@ function TestimonialsSection() {
                         transition: "opacity 0.22s ease, transform 0.22s ease",
                     }}
                 >
-                    {visibleItems.map((item) =>
-                        item.type === "video" ? (
-                            <VideoCard key={item.id} item={item} />
-                        ) : (
-                            <TextCard key={item.id} item={item} />
+                    {loading ? (
+                        Array.from({ length: cardsPerPage }).map((_, i) => (
+                            <div key={i} className="animate-pulse">
+                                <div className="flex flex-col h-full rounded-2xl bg-white shadow-md border border-slate-100 p-5 sm:p-6">
+                                    <div className="h-8 w-8 bg-slate-200 rounded mb-3" />
+                                    <div className="flex-1 space-y-3">
+                                        <div className="h-4 bg-slate-200 rounded w-full" />
+                                        <div className="h-4 bg-slate-200 rounded w-3/4" />
+                                        <div className="h-4 bg-slate-200 rounded w-1/2" />
+                                    </div>
+                                    <div className="mt-5 flex items-center gap-3 border-t border-slate-100 pt-4">
+                                        <div className="h-10 w-10 rounded-full bg-slate-200" />
+                                        <div className="space-y-1">
+                                            <div className="h-4 bg-slate-200 rounded w-24" />
+                                            <div className="h-3 bg-slate-200 rounded w-20" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        visibleItems.map((item) =>
+                            item.type === "video" ? (
+                                <VideoCard key={item.id} item={item} />
+                            ) : (
+                                <TextCard key={item.id} item={item} />
+                            )
                         )
                     )}
                 </div>

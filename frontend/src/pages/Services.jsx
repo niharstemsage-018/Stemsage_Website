@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Footer from "../components/common/Footer";
 import { ServiceCard } from "../components/home/WhatWeProvide";
+import { getServices } from "../services/serviceService";
 
-// Imported Assets
+// Imported Assets (fallback images)
 import bannerBg from "../assets/Edu-kit.webp";
 import workshopImg from "../assets/workshop-img.jpg";
 import eduKitsImg from "../assets/services/Educational_kits.png";
 import labSetupImg from "../assets/services/Lab_Setup.png";
 
-const serviceList = [
+/* ============================================================
+   FALLBACK SERVICES DATA (used when API fails or returns empty)
+   ============================================================ */
+const fallbackServices = [
     {
         id: "01",
         title: "Curriculums and Workshops",
@@ -60,6 +64,38 @@ const serviceList = [
 ];
 
 function Services() {
+    const [services, setServices] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+        let cancelled = false;
+        async function loadServices() {
+            try {
+                setLoading(true);
+                const apiServices = await getServices();
+                if (!cancelled) {
+                    if (apiServices && apiServices.length > 0) {
+                        setServices(apiServices);
+                    } else {
+                        // API succeeded but returned empty
+                        setServices([]);
+                    }
+                }
+            } catch (err) {
+                console.warn("Failed to fetch services, using fallback:", err.message);
+                if (!cancelled) {
+                    setError(true);
+                    setServices(fallbackServices);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        loadServices();
+        return () => { cancelled = true; };
+    }, []);
+
     return (
         <main className="w-full bg-white font-sans text-slate-800">
             {/* ─── Top Background Banner ─── */}
@@ -91,9 +127,32 @@ function Services() {
             {/* ─── Service Cards Grid ─── */}
             <section className="mx-auto max-w-6xl px-5 sm:px-8 pt-16 sm:pt-24 pb-24">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {serviceList.map((service) => (
-                        <ServiceCard key={service.id} item={service} />
-                    ))}
+                    {loading ? (
+                        Array.from({ length: 6 }).map((_, i) => (
+                            <div key={i} className="animate-pulse">
+                                <div className="group flex flex-col rounded-xl bg-white border border-slate-200 overflow-hidden shadow-sm">
+                                    <div className="w-full h-40 bg-slate-100" />
+                                    <div className="h-px bg-slate-100" />
+                                    <div className="flex-1 flex flex-col justify-between px-5 pt-4 pb-5">
+                                        <div className="space-y-3">
+                                            <div className="h-8 bg-slate-200 rounded w-3/4" />
+                                            <div className="h-12 bg-slate-200 rounded w-full" />
+                                            <div className="h-12 bg-slate-200 rounded w-full" />
+                                        </div>
+                                        <div className="h-10 bg-slate-200 rounded-lg w-1/2" />
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                    ) : services.length === 0 ? (
+                        <div className="col-span-full text-center py-16 text-slate-500 font-medium">
+                            Nothing here yet
+                        </div>
+                    ) : (
+                        services.map((service) => (
+                            <ServiceCard key={service.id} item={service} />
+                        ))
+                    )}
                 </div>
             </section>
 

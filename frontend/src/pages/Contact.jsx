@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Footer from "../components/common/Footer";
+import { submitContact } from "../services/contactService";
 
 const gridBg = {
   backgroundImage:
@@ -115,35 +116,32 @@ function ContactForm() {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          phone: form.phone || "",
-          subject: form.subject,
-          message: form.message,
-        }),
+      const data = await submitContact({
+        name: form.name,
+        email: form.email,
+        phone: form.phone || "",
+        subject: form.subject,
+        message: form.message,
       });
 
-      const data = await response.json();
-
-      if (response.status === 201 && data.success) {
+      if (data.success) {
         setSubmittedEmail(form.email);
         setSubmitted(true);
         setForm(INITIAL_FORM);
         setErrors(ERRORS_INIT);
-      } else if (response.status === 400) {
-        setApiError(data.message || "Please check your inputs and try again.");
       } else {
-        setApiError("Unable to send your message. Please try again later.");
+        setApiError(data.message || "Please check your inputs and try again.");
       }
     } catch (error) {
       console.error("Network or submission error:", error);
-      setApiError("Unable to send your message. Please try again later.");
+      // Handle error from apiClient
+      if (error.status === 400 && error.data?.message) {
+        setApiError(error.data.message);
+      } else if (error.message) {
+        setApiError(error.message);
+      } else {
+        setApiError("Unable to send your message. Please try again later.");
+      }
     } finally {
       setLoading(false);
     }

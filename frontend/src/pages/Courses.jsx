@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import Footer from "../components/common/Footer";
+import { getCourses } from "../services/courseService";
 
 import bannerBg from "../assets/services/Courses.png";
 import eduKitBg from "../assets/Edu-kit.webp";
 
-const courseTracks = [
+/* ============================================================
+   FALLBACK COURSE TRACKS DATA (used when API fails)
+   ============================================================ */
+const fallbackCourseTracks = [
   {
     id: "electronics",
     title: "Electronics",
@@ -95,6 +99,8 @@ function CourseComingSoonModal({ title, onClose }) {
 function Courses() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeCourseModal, setActiveCourseModal] = useState(null);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const courseParam = searchParams.get("course");
@@ -103,10 +109,35 @@ function Courses() {
     }
   }, [searchParams]);
 
+  // Load courses from API
+  useEffect(() => {
+    let cancelled = false;
+    async function loadCourses() {
+      try {
+        setLoading(true);
+        const apiCourses = await getCourses();
+        if (!cancelled) {
+          if (apiCourses && apiCourses.length > 0) {
+            setCourses(apiCourses);
+          }
+        }
+      } catch (err) {
+        console.warn("Failed to fetch courses:", err.message);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    loadCourses();
+    return () => { cancelled = true; };
+  }, []);
+
   const closeModal = () => {
     setActiveCourseModal(null);
     setSearchParams({});
   };
+
+  // Check if there are active courses
+  const hasActiveCourses = courses.length > 0;
 
   return (
     <main className="w-full bg-white font-sans text-slate-800">
@@ -121,17 +152,63 @@ function Courses() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
       </div>
 
-      {/* ─── Floating White Intro Box (Matching Services / About screenshot style) ─── */}
+      {/* ─── Floating White Intro Box ─── */}
       <div className="relative z-10 mx-auto -mt-28 sm:-mt-36 md:-mt-48 max-w-4xl px-4 sm:px-6">
         <div className="bg-white border border-slate-200/90 shadow-xl px-6 py-10 sm:px-12 sm:py-14 md:px-16 text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-normal tracking-tight text-slate-900 mb-6">
-            Courses <span className="text-red-600 font-medium">Coming Soon</span>
+            {hasActiveCourses ? "Our Courses" : "Courses <span className=\"text-red-600 font-medium\">Coming Soon</span>"}
           </h1>
-          <p className="mx-auto max-w-3xl text-sm sm:text-base md:text-lg leading-relaxed text-slate-600 font-normal">
-            At STEMSAGE, we are dedicated to fostering hands-on STEM education. We are designing comprehensive, interactive courses in Electronics, IoT, Robotics, and 3D Design. Stay tuned as we prepare to launch our live learning tracks!
-          </p>
+          {hasActiveCourses ? (
+            <p className="mx-auto max-w-3xl text-sm sm:text-base md:text-lg leading-relaxed text-slate-600 font-normal">
+              Explore our comprehensive, hands-on STEM courses designed for learners at every level.
+            </p>
+          ) : (
+            <p className="mx-auto max-w-3xl text-sm sm:text-base md:text-lg leading-relaxed text-slate-600 font-normal">
+              At STEMSAGE, we are dedicated to fostering hands-on STEM education. We are designing comprehensive, interactive courses in Electronics, IoT, Robotics, and 3D Design. Stay tuned as we prepare to launch our live learning tracks!
+            </p>
+          )}
         </div>
       </div>
+
+      {/* ─── Courses Grid (only show if courses exist) ─── */}
+      {hasActiveCourses && (
+        <section className="mx-auto max-w-7xl px-5 sm:px-8 py-16 sm:py-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {courses.map((course) => (
+              <div key={course.id} className="group relative flex flex-col rounded-xl bg-white border border-slate-200 overflow-hidden shadow-sm transition-all duration-300 hover:shadow-lg hover:border-red-200 hover:-translate-y-0.5">
+                <div className="w-full h-48 overflow-hidden bg-slate-100 shrink-0 relative">
+                  {course.coverImage ? (
+                    <img
+                      src={course.coverImage}
+                      alt={course.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400 text-xs font-semibold">
+                      Course Image
+                    </div>
+                  )}
+                </div>
+                <div className="h-px bg-slate-100" />
+                <div className="flex-1 flex flex-col justify-between px-5 pt-4 pb-5">
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 leading-tight">{course.title}</h3>
+                    <p className="mt-2 text-sm font-medium text-slate-600 leading-snug">{course.description}</p>
+                  </div>
+                  <div className="mt-5">
+                    <Link
+                      to={`/courses?course=${course.id}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-sm py-2.5 px-4 transition-all duration-300 shadow hover:shadow-md hover:scale-[1.02]"
+                    >
+                      View Details
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Spacer for clean bottom margin */}
       <div className="pb-24 sm:pb-32" />

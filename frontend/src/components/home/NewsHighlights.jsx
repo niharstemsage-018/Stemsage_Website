@@ -1,17 +1,12 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Tag, Calendar, ArrowRight } from "lucide-react";
+import { getNews } from "../../services/newsService";
 
 /* -----------------------------------------------------------------------
-   Workshop / News data — add or update items here as needed.
-   Each item:
-     - tag      : short label shown on the image (Teacher Training, etc.)
-     - date     : human-readable date string
-     - title    : headline of the news article / workshop
-     - image    : path to the card thumbnail
-     - link     : internal or external URL for "Read More"
+   FALLBACK NEWS DATA (used when API fails or returns empty)
 ------------------------------------------------------------------------ */
-const newsItems = [
+const fallbackNews = [
     {
         id: "news-1",
         tag: "Teacher Training",
@@ -61,6 +56,18 @@ const newsItems = [
         link: "/workshops",
     },
 ];
+
+/* Map API news item to component shape */
+function mapApiNews(apiNews, index) {
+    return {
+        id: String(apiNews._id || index),
+        tag: apiNews.tag || "News",
+        date: apiNews.date || new Date(apiNews.createdAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
+        title: apiNews.title,
+        image: apiNews.image,
+        link: apiNews.link || "/workshops",
+    };
+}
 
 /* -----------------------------------------------------------------------
    Single news card
@@ -131,8 +138,46 @@ function NewsCard({ item }) {
 function NewsHighlights() {
     const VISIBLE_DEFAULT = 3;
     const [showAll, setShowAll] = useState(false);
+    const [news, setNews] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
 
-    const visibleItems = showAll ? newsItems : newsItems.slice(0, VISIBLE_DEFAULT);
+    useEffect(() => {
+        let cancelled = false;
+        async function loadNews() {
+            try {
+                setLoading(true);
+                const apiNews = await getNews();
+                if (!cancelled) {
+                    if (apiNews && apiNews.length > 0) {
+                        const mapped = apiNews.map(mapApiNews);
+                        setNews(mapped);
+                    } else {
+                        // API succeeded but returned empty - hide section (empty state)
+                        setNews([]);
+                    }
+                }
+            } catch (err) {
+                console.warn("Failed to fetch news, using fallback:", err.message);
+                if (!cancelled) {
+                    setError(true);
+                    setNews(fallbackNews);
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        }
+        loadNews();
+        return () => { cancelled = true; };
+    }, []);
+
+    // Hide section entirely on empty state (no news and no error)
+    if (!loading && !error && news.length === 0) {
+        return null;
+    }
+
+    const newsItemsToShow = error ? fallbackNews : news;
+    const visibleItems = showAll ? newsItemsToShow : newsItemsToShow.slice(0, VISIBLE_DEFAULT);
 
     return (
         <section
@@ -153,7 +198,7 @@ function NewsHighlights() {
                 {/* Heading */}
                 <div className="text-center">
                     <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-slate-900 tracking-tight leading-tight">
-                        News &amp; <span className="text-red-600">Highlights</span>
+                        News & <span className="text-red-600">Highlights</span>
                     </h2>
                     <div className="mt-4 mx-auto h-[3px] w-20 bg-red-600 rounded-full" />
                     <p className="mt-5 max-w-xl mx-auto text-sm sm:text-base font-medium text-slate-500 leading-relaxed">
@@ -164,25 +209,45 @@ function NewsHighlights() {
 
                 {/* Cards Grid */}
                 <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-                    {visibleItems.map((item) => (
-                        <NewsCard key={item.id} item={item} />
-                    ))}
+                    {loading ? (
+                        Array.from({ length: 3 }).map((_, i) => (
+                            <div key={i} className="animate-pulse">
+                                <article className="group relative flex flex-col rounded-2xl overflow-hidden bg-white shadow-md border border-slate-100">
+                                    <div className="relative h-52 w-full bg-slate-200 shrink-0" />
+                                    <div className="flex flex-col flex-1 p-5">
+                                        <div className="h-6 bg-slate-200 rounded w-3/4 mb-2" />
+                                        <div className="h-4 bg-slate-200 rounded w-full" />
+                                        <div className="h-4 bg-slate-200 rounded w-2/3" />
+                                        <div className="mt-auto pt-4">
+                                            <div className="h-6 bg-slate-200 rounded w-1/4" />
+                                        </div>
+                                    </div>
+                                </article>
+                            </div>
+                        ))
+                    ) : (
+                        visibleItems.map((item) => (
+                            <NewsCard key={item.id} item={item} />
+                        ))
+                    )}
                 </div>
 
                 {/* See All / Show Less button */}
-                <div className="mt-10 flex justify-center">
-                    <button
-                        type="button"
-                        id="news-highlights-toggle-btn"
-                        onClick={() => setShowAll((prev) => !prev)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-[#1c2d5a] hover:bg-[#15234a] text-white font-bold text-sm px-8 py-3.5 shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.03]"
-                    >
-                        {showAll ? "Show Less" : "See All"}
-                        <ArrowRight
-                            className={"h-4 w-4 transition-transform duration-300 " + (showAll ? "rotate-180" : "")}
-                        />
-                    </button>
-                </div>
+                {!loading && newsItemsToShow.length > VISIBLE_DEFAULT && (
+                    <div className="mt-10 flex justify-center">
+                        <button
+                            type="button"
+                            id="news-highlights-toggle-btn"
+                            onClick={() => setShowAll((prev) => !prev)}
+                            className="inline-flex items-center gap-2 rounded-lg bg-[#1c2d5a] hover:bg-[#15234a] text-white font-bold text-sm px-8 py-3.5 shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.03]"
+                        >
+                            {showAll ? "Show Less" : "See All"}
+                            <ArrowRight
+                                className={"h-4 w-4 transition-transform duration-300 " + (showAll ? "rotate-180" : "")}
+                            />
+                        </button>
+                    </div>
+                )}
             </div>
         </section>
     );

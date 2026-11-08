@@ -4,10 +4,13 @@ const { protect, requireAdmin } = require('../../middleware/auth.middleware');
 
 function createCrudRoutes(Model, options = {}) {
   const router = express.Router();
-  const { imageField = 'image', slugField } = options;
+  const { imageField = 'image', slugField, modelName } = options;
 
-  // Public routes
-  router.get('/', factory.getAll(Model));
+  // Public routes - attach modelName to request for query filtering
+  router.get('/', (req, res, next) => {
+    req.modelName = modelName;
+    next();
+  }, factory.getAll(Model));
   router.get('/:id', factory.getOne(Model));
 
   // Slug-based lookup (for products)
