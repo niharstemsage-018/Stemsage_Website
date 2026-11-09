@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Plus, Loader2, AlertCircle } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
+import { Plus, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import DataTable from '../components/shared/DataTable';
 import FormModal from '../components/shared/FormModal';
@@ -9,25 +9,16 @@ import { contentTypes } from '../config/contentTypes';
 
 export default function ContentPage() {
   const { type } = useParams();
-  const navigate = useNavigate();
   const config = contentTypes[type];
-
-  if (!config) {
-    return (
-      <div className="flex items-center justify-center h-64 text-slate-500">
-        <p>Unknown content type: {type}</p>
-      </div>
-    );
-  }
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
 
   const fetchData = useCallback(async () => {
+    if (!config) return;
     try {
       setLoading(true);
       // Always use the admin endpoint so every row (active and inactive) is
@@ -45,8 +36,19 @@ export default function ContentPage() {
   }, [config]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (config) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      fetchData();
+    }
+  }, [config, fetchData]);
+
+  if (!config) {
+    return (
+      <div className="flex items-center justify-center h-64 text-slate-500">
+        <p>Unknown content type: {type}</p>
+      </div>
+    );
+  }
 
   const handleCreate = () => {
     setEditingItem(null);
@@ -63,15 +65,12 @@ export default function ContentPage() {
       return;
     }
     try {
-      setDeletingId(item._id || item.id);
       await api.delete(`/admin/${config.endpoint}/${item._id || item.id}`);
       toast.success(`${config.singular} deleted`);
       fetchData();
     } catch (err) {
       console.error('Delete error:', err);
       toast.error('Failed to delete');
-    } finally {
-      setDeletingId(null);
     }
   };
 
@@ -100,7 +99,7 @@ export default function ContentPage() {
 
       Object.entries(payload).forEach(([key, value]) => {
         if (key === 'images' && Array.isArray(value)) {
-          value.forEach((file, i) => formDataToSend.append('images', file));
+          value.forEach((file) => formDataToSend.append('images', file));
         } else if (value instanceof File) {
           formDataToSend.append(key, value);
         } else if (Array.isArray(value)) {

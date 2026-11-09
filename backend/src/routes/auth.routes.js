@@ -105,7 +105,7 @@ router.post('/google', async (req, res) => {
     let googlePayload;
     try {
       googlePayload = await verifyGoogleToken(credential);
-    } catch (err) {
+    } catch (_err) {
       return res.status(401).json({
         success: false,
         message: 'Invalid Google authentication.'

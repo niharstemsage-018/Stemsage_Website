@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Footer from "../components/common/Footer";
 import { ServiceCard } from "../components/home/WhatWeProvide";
 import { getServices } from "../services/serviceService";
@@ -66,7 +66,6 @@ const fallbackServices = [
 function Services() {
     const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
 
     useEffect(() => {
         let cancelled = false;
@@ -85,7 +84,6 @@ function Services() {
             } catch (err) {
                 console.warn("Failed to fetch services, using fallback:", err.message);
                 if (!cancelled) {
-                    setError(true);
                     setServices(fallbackServices);
                 }
             } finally {

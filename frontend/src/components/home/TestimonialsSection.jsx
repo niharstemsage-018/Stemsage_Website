@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Play, Quote, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Play, Quote } from "lucide-react";
 import { getTestimonials } from "../../services/testimonialService";
 
 /*
@@ -284,11 +284,7 @@ function TestimonialsSection() {
 
     const total = testimonials.length;
     const maxOffset = Math.max(0, total - cardsPerPage);
-
-    /* Clamp offset when cardsPerPage or testimonials change */
-    useEffect(() => {
-        setOffset((prev) => Math.min(prev, Math.max(0, total - cardsPerPage)));
-    }, [cardsPerPage, total]);
+    const currentOffset = Math.min(offset, maxOffset);
 
     const slide = useCallback(
         (dir) => {
@@ -318,7 +314,7 @@ function TestimonialsSection() {
         autoRef.current = setInterval(() => slide("right"), 3000);
     };
 
-    const visibleItems = testimonials.slice(offset, offset + cardsPerPage);
+    const visibleItems = testimonials.slice(currentOffset, currentOffset + cardsPerPage);
     const dotCount = maxOffset + 1;
 
     // Hide section entirely on empty state (no testimonials and no error)
@@ -423,7 +419,7 @@ function TestimonialsSection() {
                             type="button"
                             id={"testimonials-dot-" + idx}
                             onClick={() => {
-                                setAnimDir(idx > offset ? "right" : "left");
+                                setAnimDir(idx > currentOffset ? "right" : "left");
                                 setVisible(false);
                                 setTimeout(() => {
                                     setOffset(idx);
@@ -434,7 +430,7 @@ function TestimonialsSection() {
                             aria-label={"Go to slide " + (idx + 1)}
                             className={[
                                 "h-2.5 rounded-full transition-all duration-300",
-                                idx === offset
+                                idx === currentOffset
                                     ? "w-7 bg-[#1c2d5a]"
                                     : "w-2.5 bg-slate-300 hover:bg-slate-500",
                             ].join(" ")}

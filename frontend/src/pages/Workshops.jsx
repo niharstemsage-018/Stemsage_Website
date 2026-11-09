@@ -247,7 +247,6 @@ function Workshops() {
   const [viewTarget, setViewTarget] = useState(null);
   const [workshops, setWorkshops] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -266,7 +265,6 @@ function Workshops() {
       } catch (err) {
         console.warn("Failed to fetch workshops, using fallback:", err.message);
         if (!cancelled) {
-          setError(true);
           setWorkshops(fallbackWorkshops);
         }
       } finally {

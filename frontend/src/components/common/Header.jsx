@@ -508,10 +508,12 @@ function Header() {
     window.dispatchEvent(new CustomEvent("stemsage-cart-event", { detail: { items: updated } }));
   };
 
-  useEffect(() => {
+  const [prevPathname, setPrevPathname] = useState(location.pathname);
+  if (prevPathname !== location.pathname) {
+    setPrevPathname(location.pathname);
     setIsMobileMenuOpen(false);
     setOpenDropdown(null);
-  }, [location.pathname]);
+  }
 
   useEffect(() => {
     document.body.style.overflow = isMobileMenuOpen ? "hidden" : "";

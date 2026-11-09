@@ -1,12 +1,29 @@
+# Dependencies
 node_modules/
+**/node_modules/
+
+# Environment files
 .env
-*.log
-backend/.env
-backend/node_modules/
-admin/node_modules/
-admin/dist/
-admin/.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+
+# Build outputs
+dist/
+**/dist/
+
+# Documentation and project tracking
 PROGRESS.md
+
+# OS files
 .DS_Store
-frontend/dist/
+**/.DS_Store
+
+# Logs
+*.log
+**/*.log
+
+# Temporary / study logs
 backend/scripts/studyLog.json

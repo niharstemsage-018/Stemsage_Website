@@ -1,5 +1,4 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X, Loader2 } from 'lucide-react';
 import ImageUploader from './ImageUploader';
@@ -27,8 +26,6 @@ export default function FormModal({
     defaultValues,
     mode: 'onChange',
   });
-
-  const watchedFiles = watch('images') || [];
 
   const handleSubmitForm = (data) => {
     if (onSubmit) onSubmit(data);
