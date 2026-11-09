@@ -11,8 +11,7 @@ Stemsage_Website/
 ├── backend/          # Node.js / Express REST API & MongoDB Data Layer
 ├── frontend/         # Public React 19 Client Website (Vite + Tailwind CSS v4)
 ├── admin/            # Administrative Content Management Dashboard (React 19 + Vite)
-├── docs/             # Product and navigation documentation
-└── PROGRESS.md       # Project milestone tracking and verification logs
+└── docs/             # Product and navigation documentation
 ```
 
 - **Backend (`backend/`)**: Express 5 REST API connecting to MongoDB via Mongoose. Features role-based access control (RBAC), JWT authentication, Google OAuth verification, Cloudinary media storage, nodemailer contact dispatching, and rate limiting.
@@ -44,22 +43,26 @@ Copy each `.env.example` to `.env` in the respective directory:
 | `EMAIL_PORT` | SMTP port (`587` for STARTTLS, `465` for SSL) | `587` |
 | `EMAIL_USER` | SMTP username / address | `your_email@gmail.com` |
 | `EMAIL_PASSWORD` | SMTP password or app-specific password | `your_app_password` |
-| `CONTACT_EMAILS` | Target recipient email for contact enquiries | `info@stemsage.com` |
-| `ADMIN_EMAIL` | Email used by `scripts/createAdmin.js` | `admin@stemsage.com` |
+| `CONTACT_EMAILS` | Target recipient email for contact enquiries | `info@example.com` |
+| `ADMIN_EMAIL` | Email used by `scripts/createAdmin.js` | `your_admin_email@example.com` |
 | `ADMIN_PASSWORD` | Password used by `scripts/createAdmin.js` | `your_secure_password` |
 
 ### 2. Frontend (`frontend/.env`)
 
+> `frontend/src/services/apiClient.js` reads `VITE_API_URL` as the root host and appends `/api/...` paths itself in every service call, so **do not** include `/api` in this value.
+
 | Variable | Description | Default |
 | :--- | :--- | :--- |
-| `VITE_API_URL` | Root URL of backend API | `http://localhost:5000` |
+| `VITE_API_URL` | Root URL of backend (no `/api` suffix) | `http://localhost:5000` |
 | `VITE_GOOGLE_CLIENT_ID` | Google OAuth Client ID for sign-in button | `your_google_client_id` |
 
 ### 3. Admin (`admin/.env`)
 
+> `admin/src/services/api.js` uses `VITE_API_URL` directly as the axios `baseURL`. Admin service calls do **not** append `/api` themselves, so the value must include the `/api` suffix.
+
 | Variable | Description | Default |
 | :--- | :--- | :--- |
-| `VITE_API_URL` | Base API URL prefix for admin client | `http://localhost:5000/api` |
+| `VITE_API_URL` | Base API URL prefix for admin client (include `/api`) | `http://localhost:5000/api` |
 
 ---
 
@@ -124,6 +127,65 @@ cd ../backend && npm start
 
 ---
 
+## Using the Admin Panel
+
+Navigate to the admin URL (e.g., `http://localhost:5174` locally) and log in with the credentials set via `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
+
+### Content Types
+The admin panel manages the following content types, each with its own page accessible from the sidebar:
+
+| Content Type | Public Site Section |
+| :--- | :--- |
+| Products | Shop / Products section |
+| Services | Services section |
+| Courses | Courses section |
+| Workshops | Workshops section |
+| Testimonials | Testimonials / Reviews section |
+| News | News & Highlights section |
+| Gallery Images | Gallery section |
+| Association Logos | Associations / Partners section |
+| Innovations | Innovations section |
+| Blogs | Blog section |
+| Contact Messages | Enquiries from the contact form |
+
+### Common Operations
+
+**Adding content** — On any content page, click the **Add** (or **+**) button to open the form modal. Fill in all required fields and click Save. The item appears on the public site immediately.
+
+**Editing content** — Click the **edit icon** on any row in the data table to reopen the form modal pre-populated with existing values. Update fields and save.
+
+**Hiding / showing content (Active toggle)** — Every content item has an **active** toggle switch. Turning it off removes the item from the public-facing site instantly — no code change or redeployment needed. Turning it back on restores the item. Use this to temporarily hide items without deleting them.
+
+**Deleting content** — Click the **delete icon** on a row. A confirmation dialog appears before the record is permanently removed.
+
+**Uploading images** — The form modal for image-bearing content types includes an image uploader. Supported formats: JPG, PNG, WebP, GIF (max 5 MB). Images are stored on Cloudinary and their URL is saved to the database automatically.
+
+**Order field** — Where present, the **order** field is a number that controls the sort position of an item on the public-facing site. Lower numbers appear first. Use it to reorder items without deleting and re-creating them.
+
+### Contact Messages
+The **Messages** (or **Enquiries**) page lists all contact form submissions.
+
+- **Mark as read** — Toggle the read/unread status to track which messages have been reviewed.
+- **Delete** — Permanently remove a message once it has been handled.
+
+No items on the admin panel require a code change to take effect on the public site — all changes are reflected immediately via the API.
+
+---
+
+## Security Checklist
+
+Before going live, verify each of the following:
+
+- **Strong `ADMIN_PASSWORD`** — Use a long, random password that is not a dictionary word. Store it in a password manager, not in plain text.
+- **New `JWT_SECRET` in production** — Generate a fresh, random secret (e.g., `openssl rand -hex 64`). Never reuse a development secret in production.
+- **MongoDB IP allowlist** — In MongoDB Atlas (or your self-hosted setup), restrict incoming connections to your backend server's IP address only. Use a dedicated database user with read/write access to the application database only — not a root or admin account.
+- **HTTPS only** — Serve all three apps (frontend, admin, backend) over HTTPS in production. Never expose the API on plain HTTP in a production environment.
+- **Rotate Cloudinary keys if exposed** — If your Cloudinary API key or secret was ever committed to version control or logged, regenerate the keys in the Cloudinary dashboard and update your environment variables immediately.
+- **Never commit `.env` files** — `.env` files are listed in `.gitignore`. Before every push, run `git status` and confirm no `.env` files appear as staged or untracked.
+- **`NODE_ENV=production`** — Set this on the backend host to disable debug output and enable production-mode optimisations.
+
+---
+
 ## Deployment Guidelines
 
 ### Frontend & Admin (Vercel)
@@ -138,3 +200,33 @@ Both `frontend/` and `admin/` contain `vercel.json` with SPA route rewrites:
 - Configure all backend environment variables (`MONGO_URI`, `JWT_SECRET`, `FRONTEND_URL`, `ADMIN_ORIGIN`, Cloudinary, SMTP).
 - `FRONTEND_URL` and `ADMIN_ORIGIN` support comma-separated lists of production and staging origins.
 
+### Production Go-Live Steps
+
+**(a) Google OAuth — add live domains**
+In [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials → your OAuth Web Client ID, add both the live frontend URL and the live admin URL to **Authorized JavaScript origins**. Without this, Google sign-in will be blocked on the production domains.
+
+**(b) Backend CORS — set live origins**
+On your backend host, set:
+```
+FRONTEND_URL=https://your-frontend-domain.com
+ADMIN_ORIGIN=https://your-admin-domain.com
+```
+Both variables accept comma-separated values if you need to allow multiple domains (e.g., a staging origin alongside production).
+
+**(c) Frontend & admin — set live API URL**
+In Vercel project settings, set `VITE_API_URL` for each project:
+- **Frontend Vercel project**: `https://api.yourdomain.com` *(no `/api` suffix — the frontend appends it per request)*
+- **Admin Vercel project**: `https://api.yourdomain.com/api` *(include `/api` — the admin client uses this as its axios baseURL)*
+
+**(d) Seed production content**
+With production environment variables active, run once against the production database:
+```bash
+cd backend && npm run seed:content
+```
+
+**(e) Create the production admin user**
+With production environment variables active (`ADMIN_EMAIL`, `ADMIN_PASSWORD`), run once:
+```bash
+cd backend && node scripts/createAdmin.js
+```
+This creates or promotes the admin account. After this step the admin panel is ready to use at the live admin URL.
