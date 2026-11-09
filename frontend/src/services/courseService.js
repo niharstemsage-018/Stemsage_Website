@@ -1,4 +1,4 @@
-import { apiFetch, normalizeImage } from './apiClient';
+import { apiFetch } from './apiClient';
 
 /**
  * Fetch all active courses

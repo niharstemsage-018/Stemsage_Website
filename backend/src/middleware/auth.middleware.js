@@ -1,4 +1,3 @@
-const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { verifyToken } = require('../utils/jwt');
 
@@ -43,7 +42,7 @@ const protect = async (req, res, next) => {
 
     req.user = user;
     next();
-  } catch (error) {
+  } catch (_error) {
     return res.status(401).json({
       success: false,
       message: 'Not authorized, invalid token'
@@ -71,7 +70,7 @@ const requireAdmin = async (req, res, next) => {
     }
 
     next();
-  } catch (error) {
+  } catch (_error) {
     return res.status(403).json({
       success: false,
       message: 'Access forbidden'

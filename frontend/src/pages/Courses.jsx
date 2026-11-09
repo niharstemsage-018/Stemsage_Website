@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { X, Loader2 } from "lucide-react";
 import Footer from "../components/common/Footer";
@@ -10,6 +10,7 @@ import eduKitBg from "../assets/Edu-kit.webp";
 /* ============================================================
    FALLBACK COURSE TRACKS DATA (used when API fails)
    ============================================================ */
+// eslint-disable-next-line no-unused-vars
 const fallbackCourseTracks = [
   {
     id: "electronics",
@@ -98,16 +99,9 @@ function CourseComingSoonModal({ title, onClose }) {
 
 function Courses() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeCourseModal, setActiveCourseModal] = useState(null);
+  const activeCourseModal = searchParams.get("course");
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const courseParam = searchParams.get("course");
-    if (courseParam) {
-      setActiveCourseModal(courseParam);
-    }
-  }, [searchParams]);
 
   // Load courses from API
   useEffect(() => {
@@ -132,7 +126,6 @@ function Courses() {
   }, []);
 
   const closeModal = () => {
-    setActiveCourseModal(null);
     setSearchParams({});
   };
 
@@ -170,8 +163,12 @@ function Courses() {
         </div>
       </div>
 
-      {/* ─── Courses Grid (only show if courses exist) ─── */}
-      {hasActiveCourses && (
+      {/* ─── Courses Grid / Loader ─── */}
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="w-8 h-8 animate-spin text-red-600" />
+        </div>
+      ) : hasActiveCourses ? (
         <section className="mx-auto max-w-7xl px-5 sm:px-8 py-16 sm:py-24">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course) => (
@@ -208,7 +205,7 @@ function Courses() {
             ))}
           </div>
         </section>
-      )}
+      ) : null}
 
       {/* Spacer for clean bottom margin */}
       <div className="pb-24 sm:pb-32" />

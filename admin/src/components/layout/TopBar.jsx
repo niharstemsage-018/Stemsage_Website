@@ -1,6 +1,5 @@
-import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, Menu, X } from 'lucide-react';
+import { LogOut, Menu } from 'lucide-react';
 
 export default function TopBar({ onMenuClick }) {
   const { user, logout } = useAuth();

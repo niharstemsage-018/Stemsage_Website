@@ -1,6 +1,5 @@
-import React from 'react';
 import { Search, ChevronLeft, ChevronRight, ToggleLeft, ToggleRight, Trash2, Edit2, Eye } from 'lucide-react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 
 export default function DataTable({
   data = [],
@@ -45,11 +44,11 @@ export default function DataTable({
     }
   };
 
-  // Reset to the first page whenever the search term or page size changes,
-  // so the visible rows always match the current filter/slice.
-  useEffect(() => {
+  const [prevFilter, setPrevFilter] = useState({ search, pageSize });
+  if (prevFilter.search !== search || prevFilter.pageSize !== pageSize) {
+    setPrevFilter({ search, pageSize });
     setCurrentPage(1);
-  }, [search, pageSize]);
+  }
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">

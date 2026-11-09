@@ -1,7 +1,5 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, ArrowRight, Sparkles, Cpu, Code2, Bot } from "lucide-react";
-import SectionHeading from "./SectionHeading";
+import { ArrowRight, Sparkles, Cpu, Code2, Bot } from "lucide-react";
 
 const explorePillars = [
     {

@@ -1,26 +1,23 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import api from '../services/api';
+import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(localStorage.getItem('stemsage_admin_token'));
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem('stemsage_admin_user')));
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (token) {
-      setLoading(false);
-    } else {
-      setLoading(false);
+  const [token, setToken] = useState(() => localStorage.getItem('stemsage_admin_token'));
+  const [user, setUser] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('stemsage_admin_user'));
+    } catch {
+      return null;
     }
-  }, [token]);
+  });
+  const [loading] = useState(false);
 
-  const login = (token, user) => {
-    localStorage.setItem('stemsage_admin_token', token);
-    localStorage.setItem('stemsage_admin_user', JSON.stringify(user));
-    setToken(token);
-    setUser(user);
+  const login = (newToken, newUser) => {
+    localStorage.setItem('stemsage_admin_token', newToken);
+    localStorage.setItem('stemsage_admin_user', JSON.stringify(newUser));
+    setToken(newToken);
+    setUser(newUser);
   };
 
   const logout = () => {
@@ -37,4 +34,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

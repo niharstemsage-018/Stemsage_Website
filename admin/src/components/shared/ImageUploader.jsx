@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { useState } from 'react';
+import { Upload, X } from 'lucide-react';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -8,13 +8,11 @@ export default function ImageUploader({
   name,
   control,
   error,
-  required = false,
   multiple = false,
   maxFiles = 5,
   accept = ALLOWED_TYPES.join(','),
 }) {
   const [previews, setPreviews] = useState([]);
-  const [uploading, setUploading] = useState(false);
 
   const handleFiles = (files) => {
     const validFiles = [];
@@ -77,7 +75,6 @@ export default function ImageUploader({
           multiple={multiple}
           onChange={handleChange}
           className="absolute inset-0 opacity-0 cursor-pointer"
-          disabled={uploading}
         />
         <div className="flex flex-col items-center gap-2 relative z-10">
           <Upload className="h-8 w-8 text-slate-400 group-hover:text-red-500 transition-colors" />

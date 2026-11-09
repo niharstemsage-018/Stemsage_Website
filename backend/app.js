@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-const transporter = require('./src/config/mailer');
 const { publicRouter: contactRoutes, adminRouter: contactAdminRoutes } = require('./src/routes/contact.routes');
 const authRoutes = require('./src/routes/auth.routes');
 const userRoutes = require('./src/routes/user.routes');
@@ -29,15 +28,26 @@ app.set('trust proxy', 1);
 // Security middleware
 app.use(helmet());
 
-// CORS configuration for both frontend and admin
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5173',
-  process.env.ADMIN_ORIGIN || 'http://localhost:5174'
-].filter(Boolean);
+// CORS configuration for both frontend and admin (supports comma-separated origins)
+const parseOrigins = (val, defaultVal) => {
+  const raw = val !== undefined && val !== '' ? val : defaultVal;
+  return raw
+    ? raw
+        .split(',')
+        .map((origin) => origin.trim().replace(/\/+$/, ''))
+        .filter(Boolean)
+    : [];
+};
+
+const allowedOrigins = Array.from(new Set([
+  ...parseOrigins(process.env.FRONTEND_URL, 'http://localhost:5173'),
+  ...parseOrigins(process.env.ADMIN_ORIGIN, 'http://localhost:5174')
+]));
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    const normalizedOrigin = origin ? origin.replace(/\/+$/, '') : origin;
+    if (!normalizedOrigin || allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

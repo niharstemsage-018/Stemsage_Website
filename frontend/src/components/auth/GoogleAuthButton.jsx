@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { googleAuthenticate } from "../../services/authService";
@@ -49,6 +49,11 @@ export default function GoogleAuthButton({ buttonText = "Log in with Google", on
     }
   };
 
+  const handleCredentialResponseRef = useRef(handleCredentialResponse);
+  useEffect(() => {
+    handleCredentialResponseRef.current = handleCredentialResponse;
+  });
+
   useEffect(() => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     if (!clientId) {
@@ -61,7 +66,7 @@ export default function GoogleAuthButton({ buttonText = "Log in with Google", on
         try {
           window.google.accounts.id.initialize({
             client_id: clientId,
-            callback: handleCredentialResponse,
+            callback: (res) => handleCredentialResponseRef.current(res),
             auto_select: false,
             cancel_on_tap_outside: true,
           });

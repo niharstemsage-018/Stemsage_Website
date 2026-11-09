@@ -3,10 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { getProfile, updateProfile, uploadProfilePicture } from "../services/userService";
 import Footer from "../components/common/Footer";
-import { User, CheckCircle2, AlertCircle, Edit3, Save, X, LogOut, Camera, Upload } from "lucide-react";
+import { CheckCircle2, AlertCircle, Edit3, Save, X, LogOut, Camera } from "lucide-react";
 
 function Profile() {
-  const { user, token, isAuthenticated, updateUser, logout } = useAuth();
+  const { token, updateUser, logout } = useAuth();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -82,7 +82,7 @@ function Profile() {
     return () => {
       isMounted = false;
     };
-  }, [token]);
+  }, [token, updateUser]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

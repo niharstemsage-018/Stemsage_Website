@@ -1,4 +1,21 @@
+const path = require('path');
 require('dotenv').config();
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+
+// Fail fast if required environment variables are missing
+const missingEnv = [];
+if (!process.env.MONGO_URI) {
+  missingEnv.push('database URI (MONGO_URI)');
+}
+if (!process.env.JWT_SECRET) {
+  missingEnv.push('JWT_SECRET');
+}
+
+if (missingEnv.length > 0) {
+  console.error(`FATAL: Server startup aborted. Missing required environment variable(s): ${missingEnv.join(', ')}.`);
+  process.exit(1);
+}
+
 const app = require('./app');
 const connectDB = require('./src/config/db');
 

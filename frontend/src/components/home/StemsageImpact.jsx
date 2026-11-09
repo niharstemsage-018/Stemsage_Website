@@ -1,4 +1,3 @@
-import React from "react";
 import impactPhoto from "../../assets/stemsage_impact.jpg";
 
 // Icons for each stat card
