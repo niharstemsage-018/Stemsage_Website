@@ -69,14 +69,8 @@ function Footer() {
                         </h3>
                         <ul className="space-y-4 text-base font-semibold text-slate-700">
 
-
                             <li>
-                                <Link to="/workshops" className="hover:text-red-600 underline-offset-4 hover:underline">
-                                    Workshops
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/learning" className="hover:text-red-600 underline-offset-4 hover:underline">
+                                <Link to="/gallery" className="hover:text-red-600 underline-offset-4 hover:underline">
                                     Gallery
                                 </Link>
                             </li>

@@ -15,7 +15,7 @@ Stemsage_Website/
 ```
 
 - **Backend (`backend/`)**: Express 5 REST API connecting to MongoDB via Mongoose. Features role-based access control (RBAC), JWT authentication, Google OAuth verification, Cloudinary media storage, nodemailer contact dispatching, and rate limiting.
-- **Frontend (`frontend/`)**: Public website featuring dynamic data integration with graceful offline/outage fallbacks for all content sections (courses, workshops, products, services, testimonials, news highlights, gallery, associations, innovations, and blogs).
+- **Frontend (`frontend/`)**: Public website featuring dynamic data integration with graceful offline/outage fallbacks for all content sections (courses, products, services, testimonials, news highlights, gallery, associations, innovations, and blogs).
 - **Admin App (`admin/`)**: Dedicated administrative dashboard with authentication, interactive data tables, Zod-validated forms, image uploads, and live status toggles for all content types.
 
 ---
@@ -139,7 +139,6 @@ The admin panel manages the following content types, each with its own page acce
 | Products | Shop / Products section |
 | Services | Services section |
 | Courses | Courses section |
-| Workshops | Workshops section |
 | Testimonials | Testimonials / Reviews section |
 | News | News & Highlights section |
 | Gallery Images | Gallery section |

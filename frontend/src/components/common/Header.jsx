@@ -71,7 +71,7 @@ const navItems = [
     isHorizontal: true,
     dropdown: [
       { label: "Blog", path: "/forum" },
-      { label: "Gallery", path: "/learning" },
+      { label: "Gallery", path: "/gallery" },
 
     ],
   },

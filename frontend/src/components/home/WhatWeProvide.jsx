@@ -16,7 +16,7 @@ const fallbackServices = [
         title: "Curriculums and Workshops",
         description: "Structured, hands-on learning programs in STEM, Robotics, Physical AI, Innovation, Aviation, and emerging technologies, designed to develop practical skills throughout the academic year.",
         image: workshopImg,
-        link: "/workshops",
+        link: "/courses",
         buttonText: "Explore Programs"
     },
     {
@@ -64,7 +64,7 @@ const fallbackServices = [
 /* Map API service to component shape */
 function mapApiService(apiService, index) {
     const linkMap = {
-        "Curriculums and Workshops": "/workshops",
+        "Curriculums and Workshops": "/courses",
         "Smart Lab Setup": "/contact",
         "Smart Educational Kits": "/store",
         "Industrial Training Programs": "/contact",

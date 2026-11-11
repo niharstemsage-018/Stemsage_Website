@@ -47,7 +47,7 @@ function BookDemoWorkshop() {
                         {/* Red CTA Button */}
                         <div className="mt-8">
                             <Link
-                                to="/workshops"
+                                to="/contact"
                                 className="inline-block rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm sm:text-base py-3.5 px-8 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.02] text-center"
                             >
                                 Book a Demo

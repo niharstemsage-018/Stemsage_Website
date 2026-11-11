@@ -19,11 +19,6 @@ const QUERY_FILTERS = {
     string: ['category', 'level', 'mode'],
     number: ['limit']
   },
-  workshops: {
-    boolean: [],
-    string: ['category', 'status'],
-    number: ['limit']
-  },
   testimonials: {
     boolean: [],
     string: ['type'],
