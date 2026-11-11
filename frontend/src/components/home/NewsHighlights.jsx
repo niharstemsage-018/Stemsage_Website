@@ -13,7 +13,7 @@ const fallbackNews = [
         date: "7 Apr, 2026",
         title: "UCOST launches 6-day AI & Robotics mentor training in Uttarakhand",
         image: "/images/hero-2.png",
-        link: "/workshops",
+        link: "/courses",
     },
     {
         id: "news-2",
@@ -21,7 +21,7 @@ const fallbackNews = [
         date: "27 Dec, 2025",
         title: "From a Class 9 science fair model to Gujarat State's Best Startup Project…",
         image: "/images/hero-1.png",
-        link: "/workshops",
+        link: "/courses",
     },
     {
         id: "news-3",
@@ -29,7 +29,7 @@ const fallbackNews = [
         date: "23 Dec, 2025",
         title: "How AI Education is Reaching Remote Schools Where Vehicles Cannot!",
         image: "/images/hero-3.png",
-        link: "/workshops",
+        link: "/courses",
     },
     {
         id: "news-4",
@@ -37,7 +37,7 @@ const fallbackNews = [
         date: "15 Nov, 2025",
         title: "500 students explore Drone Technology at STEMSAGE National Bootcamp",
         image: "/images/hero-2.png",
-        link: "/workshops",
+        link: "/courses",
     },
     {
         id: "news-5",
@@ -45,7 +45,7 @@ const fallbackNews = [
         date: "10 Oct, 2025",
         title: "STEMSAGE sets up state-of-the-art Robotics Lab at DPS Jaipur",
         image: "/images/hero-1.png",
-        link: "/workshops",
+        link: "/courses",
     },
     {
         id: "news-6",
@@ -53,7 +53,7 @@ const fallbackNews = [
         date: "5 Sep, 2025",
         title: "STEMSAGE students win Gold at National Science Olympiad 2025",
         image: "/images/hero-3.png",
-        link: "/workshops",
+        link: "/courses",
     },
 ];
 
@@ -65,7 +65,7 @@ function mapApiNews(apiNews, index) {
         date: apiNews.date || new Date(apiNews.createdAt).toLocaleDateString("en-US", { month: "short", day: "2-digit", year: "numeric" }),
         title: apiNews.title,
         image: apiNews.image,
-        link: apiNews.link || "/workshops",
+        link: apiNews.link || "/courses",
     };
 }
 

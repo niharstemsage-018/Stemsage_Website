@@ -18,7 +18,7 @@ const fallbackServices = [
         title: "Curriculums and Workshops",
         description: "Structured, hands-on learning programs in STEM, Robotics, Physical AI, Innovation, Aviation, and emerging technologies, designed to develop practical skills throughout the academic year.",
         image: workshopImg,
-        link: "/workshops",
+        link: "/courses",
         buttonText: "Explore Programs",
     },
     {

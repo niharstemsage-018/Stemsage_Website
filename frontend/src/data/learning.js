@@ -47,16 +47,6 @@ export const learningPaths = [
   {
     id: 2,
     number: "02",
-    title: "Workshops",
-    icon: "🛠️",
-    description: "Short, hands-on sessions focused on experimentation, collaboration, and practical making.",
-    cta: "View Workshops",
-    href: "/workshops",
-    disabled: false,
-  },
-  {
-    id: 3,
-    number: "03",
     title: "Project-Based Learning",
     icon: "🔬",
     description: "Learn by designing, building, testing, and improving real projects that solve real problems.",
@@ -65,8 +55,8 @@ export const learningPaths = [
     disabled: true,
   },
   {
-    id: 4,
-    number: "04",
+    id: 3,
+    number: "03",
     title: "STEM Resources",
     icon: "📖",
     description: "Learning materials, experiments, activities, and educational resources for self-directed study.",

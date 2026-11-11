@@ -80,7 +80,7 @@ function ExploreStem() {
                         {/* Primary CTA */}
                         <div className="mt-10">
                             <Link
-                                to="/learning"
+                                to="/gallery"
                                 className="inline-flex items-center gap-3 rounded-full bg-red-600 px-8 py-4 text-sm font-bold text-white shadow-lg shadow-red-600/20 transition-all duration-300 hover:scale-105 hover:bg-red-700 hover:shadow-red-600/30"
                             >
                                 <span>Explore Programs</span>

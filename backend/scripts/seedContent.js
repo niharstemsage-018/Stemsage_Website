@@ -16,7 +16,6 @@ const mongoose = require('mongoose');
 
 // Mongoose models
 const Course = require('../src/models/Course');
-const Workshop = require('../src/models/Workshop');
 const Product = require('../src/models/Product');
 const Service = require('../src/models/Service');
 const NewsItem = require('../src/models/NewsItem');
@@ -96,7 +95,6 @@ async function runSeed() {
   // Load ESM data files dynamically
   const frontendPath = path.resolve(__dirname, '../../frontend/src');
   const coursesModule = await import(path.join(frontendPath, 'data/courses.js'));
-  const workshopsModule = await import(path.join(frontendPath, 'data/workshops.js'));
   const productsModule = await import(path.join(frontendPath, 'data/products.js'));
 
   // 1. COURSES MIGRATION
@@ -137,48 +135,9 @@ async function runSeed() {
   }
   console.log(`Courses Summary: ${coursesStats.created} created, ${coursesStats.updated} updated, ${coursesStats.skipped} skipped.\n`);
 
-  // 2. WORKSHOPS MIGRATION
-  console.log('--- 2. Migrating Workshops ---');
-  let workshopsStats = { created: 0, updated: 0, skipped: 0 };
-  const rawWorkshops = workshopsModule.workshops || [];
 
-  for (let i = 0; i < rawWorkshops.length; i++) {
-    const item = rawWorkshops[i];
-    const query = { title: item.title };
-    const updateData = {
-      title: item.title,
-      category: item.category,
-      date: item.date,
-      duration: item.duration,
-      location: item.location,
-      level: item.level,
-      seats: item.seats,
-      seatsLeft: item.seatsLeft,
-      status: item.status || 'OPEN',
-      description: item.description,
-      detail: item.detail || {},
-      isActive: true,
-      order: i + 1
-    };
-
-    if (isDryRun) {
-      console.log(`[DRY-RUN] Workshop: "${item.title}"`);
-      workshopsStats.created++;
-    } else {
-      const existing = await Workshop.findOne(query);
-      if (existing) {
-        await Workshop.updateOne(query, updateData);
-        workshopsStats.updated++;
-      } else {
-        await Workshop.create(updateData);
-        workshopsStats.created++;
-      }
-    }
-  }
-  console.log(`Workshops Summary: ${workshopsStats.created} created, ${workshopsStats.updated} updated, ${workshopsStats.skipped} skipped.\n`);
-
-  // 3. PRODUCTS MIGRATION (Store data + OurProducts home components merged)
-  console.log('--- 3. Migrating Products ---');
+  // 2. PRODUCTS MIGRATION (Store data + OurProducts home components merged)
+  console.log('--- 2. Migrating Products ---');
   let productsStats = { created: 0, updated: 0, skipped: 0 };
   const storeProducts = (productsModule.products || []).map((p) => ({
     title: p.name,
@@ -317,8 +276,8 @@ async function runSeed() {
   }
   console.log(`Products Summary: ${productsStats.created} created, ${productsStats.updated} updated, ${productsStats.skipped} skipped.\n`);
 
-  // 4. SERVICES MIGRATION
-  console.log('--- 4. Migrating Services ---');
+  // 3. SERVICES MIGRATION
+  console.log('--- 3. Migrating Services ---');
   let servicesStats = { created: 0, updated: 0, skipped: 0 };
   const rawServices = [
     {
@@ -400,8 +359,8 @@ async function runSeed() {
   }
   console.log(`Services Summary: ${servicesStats.created} created, ${servicesStats.updated} updated, ${servicesStats.skipped} skipped.\n`);
 
-  // 5. NEWS ITEMS MIGRATION
-  console.log('--- 5. Migrating News Items ---');
+  // 4. NEWS ITEMS MIGRATION
+  console.log('--- 4. Migrating News Items ---');
   let newsStats = { created: 0, updated: 0, skipped: 0 };
   const rawNews = [
     {
@@ -490,8 +449,8 @@ async function runSeed() {
   }
   console.log(`NewsItems Summary: ${newsStats.created} created, ${newsStats.updated} updated, ${newsStats.skipped} skipped.\n`);
 
-  // 6. TESTIMONIALS MIGRATION
-  console.log('--- 6. Migrating Testimonials ---');
+  // 5. TESTIMONIALS MIGRATION
+  console.log('--- 5. Migrating Testimonials ---');
   let testimonialsStats = { created: 0, updated: 0, skipped: 0 };
   const rawTestimonials = [
     {
@@ -602,8 +561,8 @@ async function runSeed() {
   }
   console.log(`Testimonials Summary: ${testimonialsStats.created} created, ${testimonialsStats.updated} updated, ${testimonialsStats.skipped} skipped.\n`);
 
-  // 7. ASSOCIATION LOGOS MIGRATION
-  console.log('--- 7. Migrating Association Logos ---');
+  // 6. ASSOCIATION LOGOS MIGRATION
+  console.log('--- 6. Migrating Association Logos ---');
   let associationsStats = { created: 0, updated: 0, skipped: 0 };
   const rawLogos = [
     { name: 'CP', logoPath: 'frontend/src/assets/association_logos/CP.png' },
@@ -653,8 +612,8 @@ async function runSeed() {
   }
   console.log(`Associations Summary: ${associationsStats.created} created, ${associationsStats.updated} updated, ${associationsStats.skipped} skipped.\n`);
 
-  // 8. DOORS OF INNOVATION MIGRATION
-  console.log('--- 8. Migrating Doors of Innovation ---');
+  // 7. DOORS OF INNOVATION MIGRATION
+  console.log('--- 7. Migrating Doors of Innovation ---');
   let doorsStats = { created: 0, updated: 0, skipped: 0 };
   const rawDoors = [
     { name: 'Electronics', gifPath: 'frontend/src/assets/innovations/electronics.gif' },
@@ -703,8 +662,8 @@ async function runSeed() {
   }
   console.log(`Innovation Doors Summary: ${doorsStats.created} created, ${doorsStats.updated} updated, ${doorsStats.skipped} skipped.\n`);
 
-  // 9. GALLERY IMAGES MIGRATION
-  console.log('--- 9. Migrating Gallery Images ---');
+  // 8. GALLERY IMAGES MIGRATION
+  console.log('--- 8. Migrating Gallery Images ---');
   let galleryStats = { created: 0, updated: 0, skipped: 0 };
   const rawGallery = [
     { title: 'STEM Workshop Presentation', imagePath: 'frontend/src/assets/gallery/image_01.jpg' },

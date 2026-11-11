@@ -13,7 +13,6 @@ const { publicRouter: blogRoutes, adminRouter: blogAdminRoutes } = require('./sr
 const Product = require('./src/models/Product');
 const Service = require('./src/models/Service');
 const Course = require('./src/models/Course');
-const Workshop = require('./src/models/Workshop');
 const Testimonial = require('./src/models/Testimonial');
 const NewsItem = require('./src/models/NewsItem');
 const GalleryImage = require('./src/models/GalleryImage');
@@ -85,7 +84,6 @@ const models = [
   { name: 'products', model: Product, opts: { imageField: 'images', slugField: 'slug' } },
   { name: 'services', model: Service },
   { name: 'courses', model: Course },
-  { name: 'workshops', model: Workshop },
   { name: 'testimonials', model: Testimonial },
   { name: 'news', model: NewsItem },
   { name: 'gallery', model: GalleryImage },
