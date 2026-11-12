@@ -78,21 +78,28 @@ const navItems = [
   { label: "Contact", path: "/contact" },
 ];
 
-/* ─── Coming Soon Modal ─── */
+/* ─── Coming Soon Modal for Courses ─── */
 function ComingSoonModal({ title, onClose }) {
   if (!title) return null;
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl text-center">
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-md overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl text-center"
+        onClick={(e) => e.stopPropagation()}
+      >
         <button
           onClick={onClose}
           type="button"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition cursor-pointer"
+          aria-label="Close"
         >
           <X size={18} />
-        </button>
+        </button>``
 
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600 text-3xl shadow-inner">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600 text-3xl">
           🚀
         </div>
 
@@ -100,26 +107,29 @@ function ComingSoonModal({ title, onClose }) {
           Coming Soon
         </span>
 
-        <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900 mb-2">
+        <h3 className="text-xl sm:text-2xl font-bold text-slate-900 mb-2">
           {title}
         </h3>
 
         <p className="text-sm text-slate-600 leading-relaxed mb-6">
-          This course is currently under development. Stay tuned for upcoming schedule releases and enrollment details!
+          This course is currently under development by our engineering team. Stay tuned for upcoming schedule releases and curriculum updates!
         </p>
 
         <div className="flex flex-col gap-2.5">
-          <Link
-            to="/courses"
-            onClick={onClose}
-            className="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-md"
+          <button
+            onClick={() => {
+              alert(`Thank you for your interest in "${title}"! We will notify you upon launch.`);
+              onClose();
+            }}
+            type="button"
+            className="w-full py-3 px-4 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider transition shadow-md cursor-pointer"
           >
-            Browse Course Catalog
-          </Link>
+            Notify Me Upon Release
+          </button>
           <button
             onClick={onClose}
             type="button"
-            className="w-full py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs uppercase tracking-wider transition"
+            className="w-full py-2.5 px-4 rounded-full border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs uppercase tracking-wider transition cursor-pointer"
           >
             Close
           </button>
@@ -185,13 +195,13 @@ function CoursesMegaMenu({ onCourseClick }) {
                     <ul className="flex flex-col gap-2 pl-3">
                       {cat.items.map((item) => (
                         <li key={item.label}>
-                          <Link
-                            to={`/courses?course=${encodeURIComponent(item.label)}`}
+                          <button
+                            type="button"
                             onClick={() => onCourseClick(item.label)}
                             className="text-[13px] font-normal text-slate-700 hover:text-blue-600 transition-colors block py-0.5 text-left w-full cursor-pointer"
                           >
                             {item.label}
-                          </Link>
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -475,7 +485,7 @@ function Header() {
   const { isAuthenticated, user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState(null);
-  const [comingSoonTitle, setComingSoonTitle] = useState(null);
+  const [comingSoonCourse, setComingSoonCourse] = useState(null);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const location = useLocation();
@@ -547,10 +557,9 @@ function Header() {
     return false;
   };
 
-  const handleCourseItemClick = (courseTitle) => {
+  const handleCourseClick = (courseTitle) => {
     setOpenDropdown(null);
-    setIsMobileMenuOpen(false);
-    setComingSoonTitle(courseTitle);
+    setComingSoonCourse(courseTitle);
   };
 
   return (
@@ -605,7 +614,7 @@ function Header() {
                         style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
                       />
                     </Link>
-                    {isOpen && <CoursesMegaMenu onCourseClick={handleCourseItemClick} />}
+                    {isOpen && <CoursesMegaMenu onCourseClick={handleCourseClick} />}
                   </div>
                 );
               }
@@ -763,14 +772,17 @@ function Header() {
                                   <span>{cat.title}</span>
                                 </div>
                                 {cat.items.map((child) => (
-                                  <Link
+                                  <button
                                     key={child.label}
-                                    to={`/courses?course=${encodeURIComponent(child.label)}`}
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="block pl-3 text-xs text-slate-600 hover:text-blue-600 py-1 text-left w-full"
+                                    type="button"
+                                    onClick={() => {
+                                      setIsMobileMenuOpen(false);
+                                      setComingSoonCourse(child.label);
+                                    }}
+                                    className="block pl-3 text-xs text-slate-600 hover:text-blue-600 py-1 text-left w-full cursor-pointer"
                                   >
                                     {child.label}
-                                  </Link>
+                                  </button>
                                 ))}
                               </div>
                             ))
@@ -864,10 +876,10 @@ function Header() {
         )}
       </header>
 
-      {/* Coming Soon Modal */}
+      {/* Coming Soon Modal for Courses */}
       <ComingSoonModal
-        title={comingSoonTitle}
-        onClose={() => setComingSoonTitle(null)}
+        title={comingSoonCourse}
+        onClose={() => setComingSoonCourse(null)}
       />
 
       {/* Right Cart Sidebar Drawer */}
