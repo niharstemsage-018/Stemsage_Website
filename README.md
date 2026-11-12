@@ -1,4 +1,4 @@
-# STEMSAGE Web Platform
+=# STEMSAGE Web Platform
 
 Full-stack web application, administrative content management dashboard, and API backend for **STEMSAGE Techworld**, enabling STEM education, hands-on workshops, course management, educational products, and community blogs.
 
